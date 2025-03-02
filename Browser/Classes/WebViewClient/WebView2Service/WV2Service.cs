@@ -148,6 +148,7 @@ namespace WV2Service
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyname));
         }
+
     }
    
 }

@@ -6,6 +6,7 @@ namespace WV2Service
 {
     public partial class WebViewService
     {
+
         private void InitializeBrowser()
         {
             InitializeProfile();
@@ -19,7 +20,7 @@ namespace WV2Service
             try
             {
                 await webView.EnsureCoreWebView2Async(environment);
-                return  webView.CoreWebView2.Profile;
+                return webView.CoreWebView2.Profile;
             }
             catch (Exception ex)
             {
