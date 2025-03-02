@@ -6,7 +6,15 @@ using System.Threading.Tasks;
 
 namespace WV2Service.Client
 {
-    internal class WV2Service
+    public class WV2Client
     {
+
+
+        private WebViewService WV2Service;
+
+        public WV2Client()
+        { 
+        
+        }
     }
 }
