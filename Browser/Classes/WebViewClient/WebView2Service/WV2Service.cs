@@ -5,14 +5,13 @@ using System.Runtime.CompilerServices;
 
 namespace WV2Service
 {
-    public partial class WebViewService : INotifyPropertyChanged
+    public partial class WebViewService
     {
         //private WV2ServiceModel _WebViewModel;
         private string _TempFolder { get; set; }
         private string _addExtensionsDirectory { get; set; }
-        public ClearManager Clear { get; }
-        public NavigationManager Navigation { get; }
-        public event PropertyChangedEventHandler? PropertyChanged;
+        internal ClearManager Clear { get; }
+        internal NavigationManager Navigation { get; }
         public event EventHandler<CoreWebView2NewWindowRequestedEventArgs> NewWindowRequested;
         public event EventHandler<string> NavigationChanged;
 
@@ -50,11 +49,6 @@ namespace WV2Service
             Navigation = new NavigationManager(this);
             Profile = _profile;
             environment = _environment;
-        }
-
-        public void NotifyPropertyChanged([CallerMemberName] string propertyname = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyname));
         }
 
     }

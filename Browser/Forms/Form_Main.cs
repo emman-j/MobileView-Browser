@@ -36,6 +36,7 @@ namespace MobileView
 
             formManager.PreserveCurrentFormLocationAndSize(currentForm);
             EnableBorderlessWindows();
+
             Browser.EnsureExtensionsDirectory();
             _extensionsPaths = Browser.GetExtensionsPath();
 
@@ -62,7 +63,7 @@ namespace MobileView
                 WebViewControl = WebView21,
                 ExtensionsPath = _extensionsPaths
             };
-            Browser.PropertyChanged += WebView_PropertyChanged;
+            //Browser.PropertyChanged += WebView_PropertyChanged;
             Browser.NewWindowRequested += OnNewWindowRequested;
             Browser.InitializeWebView();
             FormTextLabel.DataBindings.Add("Text", Browser, nameof(Browser.SiteTitle));
@@ -75,7 +76,7 @@ namespace MobileView
             URLTextBox.Size = new Size(252, 23);
             Browser = new WebViewService();
             Browser.WebViewControl = WebView21;
-            Browser.PropertyChanged += WebView_PropertyChanged;
+            //Browser.PropertyChanged += WebView_PropertyChanged;
             Browser.NewWindowRequested += OnNewWindowRequested;
             Browser.InitializeWebViewNewTab(profileFolder);
             FormTextLabel.DataBindings.Add("Text", Browser, nameof(Browser.SiteTitle));
@@ -91,7 +92,7 @@ namespace MobileView
                 WebViewControl = WebView21,
                 ExtensionsPath = ublock
             };
-            Browser.PropertyChanged += WebView_PropertyChanged;
+            //Browser.PropertyChanged += WebView_PropertyChanged;
             Browser.Incognito_InitializeWebView();
         }
         private void EnableBorderlessWindows()
