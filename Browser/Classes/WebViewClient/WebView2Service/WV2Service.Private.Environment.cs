@@ -6,6 +6,7 @@ namespace WV2Service
 {
     public partial class WebViewService
     {
+
         private void InitializeBrowser()
         {
             InitializeProfile();
@@ -19,7 +20,7 @@ namespace WV2Service
             try
             {
                 await webView.EnsureCoreWebView2Async(environment);
-                return  webView.CoreWebView2.Profile;
+                return webView.CoreWebView2.Profile;
             }
             catch (Exception ex)
             {
@@ -87,7 +88,26 @@ namespace WV2Service
         private async void EnableMobileView(WebView2 webView, CoreWebView2Environment environment)
         {
             await webView.EnsureCoreWebView2Async(environment);
-            webView.CoreWebView2.Settings.UserAgent = @"Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Mobile Safari/537.36";
+            //webView.CoreWebView2.Settings.UserAgent = @"Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Mobile Safari/537.36";
+            webView.CoreWebView2.Settings.UserAgent = @"Mozilla/5.0 (Linux; Android 15; SM-N986U) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.105 Mobile Safari/537.36";
+
+            // Set viewport dimensions to match Samsung Galaxy Note 20 Ultra
+            await webView.CoreWebView2.ExecuteScriptAsync(@"
+                Object.defineProperty(window, 'innerWidth', { get: () => 412 });
+                Object.defineProperty(window, 'innerHeight', { get: () => 915 });
+                Object.defineProperty(window.screen, 'width', { get: () => 412 });
+                Object.defineProperty(window.screen, 'height', { get: () => 915 });
+                Object.defineProperty(window.screen, 'devicePixelRatio', { get: () => 3.5 });
+            ");
+
+            // Inject viewport meta tag for responsive design
+            await webView.CoreWebView2.ExecuteScriptAsync(@"
+                const meta = document.createElement('meta');
+                meta.name = 'viewport';
+                meta.content = 'width=device-width, initial-scale=1.0';
+                document.head.appendChild(meta);
+            ");
+
         }
     }
 }

@@ -15,7 +15,8 @@ namespace WV2Service
         {
             if (!url.StartsWith("http://", StringComparison.OrdinalIgnoreCase) &&
                 !url.StartsWith("https://", StringComparison.OrdinalIgnoreCase) &&
-                !url.StartsWith("edge://", StringComparison.OrdinalIgnoreCase))
+                !url.StartsWith("edge://", StringComparison.OrdinalIgnoreCase) &&
+                !url.StartsWith("chrome-extension://", StringComparison.OrdinalIgnoreCase))
             {
                 url = "https://" + url;
             }
@@ -23,7 +24,7 @@ namespace WV2Service
         }
         private bool IsURLSuffixValid(string url)
         {
-            string[] validTLDs = { ".com", ".org", ".net", ".edu", ".gov", ".io", ".co", ".us", ".uk", ".ph" };
+            string[] validTLDs = { ".com", ".org", ".net", ".edu", ".gov", ".io", ".co", ".us", ".uk", ".ph", ".html"};
             if (url.StartsWith("edge://", StringComparison.OrdinalIgnoreCase)) { return true; }
             foreach (string tld in validTLDs)
             {

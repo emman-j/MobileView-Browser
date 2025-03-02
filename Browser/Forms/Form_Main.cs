@@ -149,6 +149,7 @@ namespace MobileView
         private void OnNewWindowRequested(object? sender, CoreWebView2NewWindowRequestedEventArgs e) // custom event when a link new tab/window is requested
         {
             e.Handled = true;
+            string url = e.Uri.ToString();
             OpenNewWindow(e.Uri);
             return;
         }
