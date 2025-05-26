@@ -112,6 +112,18 @@ namespace WV2Service
                 }
             }
         }
+        public string UserAgent
+        {
+            get { return _WebViewModel.UserAgent; }
+            set
+            {
+                if (_WebViewModel.UserAgent != value)
+                {
+                    _WebViewModel.UserAgent = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
         public WebViewService() 
         {
             _WebViewModel = new WV2ServiceModel();

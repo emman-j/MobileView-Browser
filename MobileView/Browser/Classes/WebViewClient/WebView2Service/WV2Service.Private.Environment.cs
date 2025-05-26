@@ -89,7 +89,7 @@ namespace WV2Service
         {
             await webView.EnsureCoreWebView2Async(environment);
             //webView.CoreWebView2.Settings.UserAgent = @"Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Mobile Safari/537.36";
-            webView.CoreWebView2.Settings.UserAgent = @"Mozilla/5.0 (Linux; Android 15; SM-N986U) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.105 Mobile Safari/537.36";
+            webView.CoreWebView2.Settings.UserAgent = UserAgent;
 
             // Set viewport dimensions to match Samsung Galaxy Note 20 Ultra
             await webView.CoreWebView2.ExecuteScriptAsync(@"

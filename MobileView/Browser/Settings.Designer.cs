@@ -1,0 +1,59 @@
+﻿namespace MobileView
+{
+    partial class Settings
+    {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            UserAgent = new Label();
+            SuspendLayout();
+            // 
+            // UserAgent
+            // 
+            UserAgent.AutoSize = true;
+            UserAgent.Location = new Point(9, 8);
+            UserAgent.Name = "UserAgent";
+            UserAgent.Size = new Size(65, 15);
+            UserAgent.TabIndex = 0;
+            UserAgent.Text = "User Agent";
+            // 
+            // Settings
+            // 
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(275, 247);
+            Controls.Add(UserAgent);
+            Name = "Settings";
+            Text = "Settings";
+            ResumeLayout(false);
+            PerformLayout();
+        }
+
+        #endregion
+
+        private Label UserAgent;
+    }
+}

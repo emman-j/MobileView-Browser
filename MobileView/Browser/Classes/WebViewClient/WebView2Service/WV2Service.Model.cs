@@ -12,6 +12,7 @@ namespace WV2Service
             string ProfileName { get; set; }
             string URL { get; set; }
             string ProfileFolder { get; set; }
+            string UserAgent { get; set; }
             List<string> ExtensionsPath { get; set; }
             CoreWebView2Environment Environment { get; set; }
             CoreWebView2Profile Profile { get; set; }
@@ -23,6 +24,7 @@ namespace WV2Service
             public string ProfileName { get; set; }
             public string URL { get; set; }
             public string ProfileFolder { get; set; }
+            public string UserAgent { get; set; }
             public List<string> ExtensionsPath { get; set; }
             public CoreWebView2Environment Environment { get; set; }
             public CoreWebView2Profile Profile { get; set; }

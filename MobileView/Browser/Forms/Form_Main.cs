@@ -9,6 +9,7 @@ namespace MobileView
 {
     public partial class Form_Main : Form
     {
+        private static string UserAgent = Properties.Settings.Default.UserAgent;
         private readonly TitleBar titleBar;
         private readonly FormManager formManager;
         private WebViewService Browser;
@@ -16,6 +17,7 @@ namespace MobileView
         private bool _incognito;
         private bool _newWindow;
         private string _url;
+
 
         public Form_Main(bool incognito = false, Form? currentForm = null, string? url = null, string? profileFolder = null)
         {
@@ -33,7 +35,7 @@ namespace MobileView
                 closeButton: CloseButton,
                 minimizeButton: MinimizeButton
             );
-
+            Browser.UserAgent = UserAgent;
             formManager.PreserveCurrentFormLocationAndSize(currentForm);
             EnableBorderlessWindows();
             Browser.EnsureExtensionsDirectory();
@@ -60,7 +62,8 @@ namespace MobileView
             {
                 ProfileName = "User1",
                 WebViewControl = WebView21,
-                ExtensionsPath = _extensionsPaths
+                ExtensionsPath = _extensionsPaths,
+                UserAgent = UserAgent
             };
             Browser.PropertyChanged += WebView_PropertyChanged;
             Browser.NewWindowRequested += OnNewWindowRequested;
@@ -74,6 +77,7 @@ namespace MobileView
             MenuButton.Visible = false;
             URLTextBox.Size = new Size(252, 23);
             Browser = new WebViewService();
+            Browser.UserAgent = UserAgent;
             Browser.WebViewControl = WebView21;
             Browser.PropertyChanged += WebView_PropertyChanged;
             Browser.NewWindowRequested += OnNewWindowRequested;
@@ -89,7 +93,8 @@ namespace MobileView
             {
                 ProfileName = "User1",
                 WebViewControl = WebView21,
-                ExtensionsPath = ublock
+                ExtensionsPath = ublock,
+                UserAgent = UserAgent
             };
             Browser.PropertyChanged += WebView_PropertyChanged;
             Browser.Incognito_InitializeWebView();
