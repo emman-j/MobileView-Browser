@@ -41,10 +41,14 @@ namespace MobileView_Wpf.Infrastructure.Behaviors
                 if ((bool)e.NewValue)
                 {
                     element.MouseLeftButtonDown += Element_MouseLeftButtonDown;
+                    element.MouseLeftButtonUp += Element_MouseLeftButtonUp;
+                    element.MouseLeftButtonDown += Element_MouseDoubleClick;
                 }
                 else
                 {
                     element.MouseLeftButtonDown -= Element_MouseLeftButtonDown;
+                    element.MouseLeftButtonUp -= Element_MouseLeftButtonUp;
+                    element.MouseLeftButtonDown -= Element_MouseDoubleClick;
                 }
             }
         }
@@ -58,6 +62,25 @@ namespace MobileView_Wpf.Infrastructure.Behaviors
                 {
                     ReleaseCapture();
                     SendMessage(new WindowInteropHelper(window).Handle, WM_NCLBUTTONDOWN, HTCAPTION, 0);
+                }
+            }
+        }
+        private static void Element_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            // Optional: add logic for releasing mouse after drag
+        }
+
+        private static void Element_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left && sender is DependencyObject depObj)
+            {
+                var window = Window.GetWindow(depObj);
+                if (window != null && window.ResizeMode != ResizeMode.NoResize)
+                {
+                    if (window.WindowState == WindowState.Normal)
+                        window.WindowState = WindowState.Maximized;
+                    else if (window.WindowState == WindowState.Maximized)
+                        window.WindowState = WindowState.Normal;
                 }
             }
         }
