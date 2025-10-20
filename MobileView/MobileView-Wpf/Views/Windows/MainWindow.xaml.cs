@@ -11,8 +11,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using MobileView_Wpf.ViewModel.Windows;
 
-namespace MobileView_Wpf.Views
+namespace MobileView_Wpf.Views.Windows
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -22,6 +23,7 @@ namespace MobileView_Wpf.Views
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new MainWindowVM();
         }
     }
 }

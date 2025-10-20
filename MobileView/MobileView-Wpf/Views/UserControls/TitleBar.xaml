@@ -4,26 +4,59 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MobileView_Wpf.Views.UserControls"
+             xmlns:vm="clr-namespace:MobileView_Wpf.ViewModel.UserControl"
              xmlns:behaviors="clr-namespace:MobileView_Wpf.Infrastructure.Behaviors"
              mc:Ignorable="d" 
              d:DesignHeight="30" d:DesignWidth="337">
-    <StackPanel 
-        Orientation="Horizontal" 
-        FlowDirection="RightToLeft"
-        Background="LightGray" 
-        Height="30"
-        behaviors:WindowDrag.IsDragEnabled="True">
+
+    <UserControl.Resources>
+        <Style x:Key="RoundedTextBoxStyle" TargetType="TextBox">
+            <Setter Property="BorderBrush" Value="Gray"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="6"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="10">
+                            <ScrollViewer Margin="0" x:Name="PART_ContentHost"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Background="LightGray" MouseLeftButtonDown="StackPanel_MouseLeftButtonDown">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
         <Button 
+            Grid.Column="1"
+            Content="✕"
+            Width="30"
+            Height="30"
+            Background="Transparent"
+            BorderThickness="0"
+            FontWeight="Bold"
+            FontSize="18"
+            Foreground="Black"
+            Cursor="Hand"
+            Padding="0"
             VerticalAlignment="Center"
-            Content="Minimize" 
-            Width="75" />
-        <Button 
-            VerticalAlignment="Center"
-            Content="Maximize" 
-            Width="75" />
-        <Button 
-            VerticalAlignment="Center"
-            Content="Close" 
-            Width="75" />
-    </StackPanel>
+            HorizontalAlignment="Right"
+            Command="{Binding TitleBarCloseCommand}" />
+        <TextBox 
+            Grid.Column="0" 
+            Margin="8,2,2,2"
+            Style="{StaticResource RoundedTextBoxStyle}"
+            Text="{Binding TextValue, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            Width="200" 
+            HorizontalAlignment="Left"/>
+    </Grid>
+
 </UserControl>

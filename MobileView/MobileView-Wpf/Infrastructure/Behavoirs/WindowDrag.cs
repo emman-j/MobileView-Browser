@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
-using System.Windows;
 
 namespace MobileView_Wpf.Infrastructure.Behaviors
 {
@@ -34,25 +35,70 @@ namespace MobileView_Wpf.Infrastructure.Behaviors
             return (bool)element.GetValue(IsDragEnabledProperty);
         }
 
+        //private static void OnIsDragEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        //{
+        //    if (d is UIElement element)
+        //    {
+        //        if ((bool)e.NewValue)
+        //        {
+        //            element.MouseLeftButtonDown += Element_MouseLeftButtonDown;
+        //            element.MouseLeftButtonUp += Element_MouseLeftButtonUp;
+        //            element.MouseLeftButtonDown += Element_MouseDoubleClick;
+        //        }
+        //        else
+        //        {
+        //            element.MouseLeftButtonDown -= Element_MouseLeftButtonDown;
+        //            element.MouseLeftButtonUp -= Element_MouseLeftButtonUp;
+        //            element.MouseLeftButtonDown -= Element_MouseDoubleClick;
+        //        }
+        //    }
+        //}
         private static void OnIsDragEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is UIElement element)
             {
                 if ((bool)e.NewValue)
                 {
-                    element.MouseLeftButtonDown += Element_MouseLeftButtonDown;
-                    element.MouseLeftButtonUp += Element_MouseLeftButtonUp;
-                    element.MouseLeftButtonDown += Element_MouseDoubleClick;
+                    element.PreviewMouseLeftButtonDown += Element_PreviewMouseLeftButtonDown;
                 }
                 else
                 {
-                    element.MouseLeftButtonDown -= Element_MouseLeftButtonDown;
-                    element.MouseLeftButtonUp -= Element_MouseLeftButtonUp;
-                    element.MouseLeftButtonDown -= Element_MouseDoubleClick;
+                    element.PreviewMouseLeftButtonDown -= Element_PreviewMouseLeftButtonDown;
                 }
             }
         }
+        private static void Element_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            // Ignore clicks on child controls that handle input (e.g., Buttons)
+            if (e.OriginalSource is DependencyObject source &&
+                (source is Button || source is TextBox || source is PasswordBox))
+            {
+                return;
+            }
 
+            if (sender is DependencyObject depObj)
+            {
+                Window window = Window.GetWindow(depObj);
+                if (window == null) return;
+
+                if (e.ClickCount == 2)
+                {
+                    // Double click to toggle maximize/restore
+                    if (window.ResizeMode != ResizeMode.NoResize)
+                    {
+                        window.WindowState = window.WindowState == WindowState.Normal
+                            ? WindowState.Maximized
+                            : WindowState.Normal;
+                    }
+                }
+                else
+                {
+                    // Single click to drag
+                    ReleaseCapture();
+                    SendMessage(new WindowInteropHelper(window).Handle, WM_NCLBUTTONDOWN, HTCAPTION, 0);
+                }
+            }
+        }
         private static void Element_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (sender is DependencyObject depObj)
@@ -69,7 +115,6 @@ namespace MobileView_Wpf.Infrastructure.Behaviors
         {
             // Optional: add logic for releasing mouse after drag
         }
-
         private static void Element_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left && sender is DependencyObject depObj)
