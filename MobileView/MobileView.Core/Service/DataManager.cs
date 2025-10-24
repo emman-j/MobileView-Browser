@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MobileView.Core.Winforms;
+using MobileView.Core.WPF;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +8,13 @@ using System.Threading.Tasks;
 
 namespace MobileView.Core.Service
 {
-    internal class DataManager
+    public class DataManager
     {
+        IWV2 WebView { get; set; }
+
+        public DataManager(IWV2 webView)
+        {
+            WebView = webView;
+        }
     }
 }
