@@ -1,5 +1,6 @@
 using Microsoft.Web.WebView2.Core;
 using MobileView.Core;
+using MobileView.Core.Enums;
 using MobileView.Winforms.Utilities;
 using System.ComponentModel;
 
@@ -7,15 +8,16 @@ namespace MobileView.Winforms
 {
     public partial class Form_Main : Form
     {
-        private static string UserAgent = Properties.Settings.Default.UserAgent;
+        //private static string UserAgent = Properties.Settings.Default.UserAgent;
+        private static string UserAgent = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.7444.139 Mobile Safari/537.36";
         private readonly TitleBar titleBar;
         private readonly FormManager formManager;
-        private WV2Service Browser;
+        private WV2Service WebService;
         private List<string> _extensionsPaths;
         private bool _incognito;
         private bool _newWindow;
         private string _url;
-
+        private UIFramework UIFramework => UIFramework.Winforms;
 
         public Form_Main(bool incognito = false, Form? currentForm = null, string? url = null, string? profileFolder = null)
         {
@@ -23,7 +25,7 @@ namespace MobileView.Winforms
 
             _incognito = incognito;
             _url = url;
-            Browser = new WV2Service();
+            WebService = new WV2Service(UIFramework, WebView21);
             formManager = new FormManager(this);
             titleBar = new TitleBar
             (
@@ -33,69 +35,63 @@ namespace MobileView.Winforms
                 closeButton: CloseButton,
                 minimizeButton: MinimizeButton
             );
-            Browser.UserAgent = UserAgent;
+
             formManager.PreserveCurrentFormLocationAndSize(currentForm);
             EnableBorderlessWindows();
-            Browser.EnsureExtensionsDirectory();
-            _extensionsPaths = Browser.GetExtensionsPath();
+
+            WebService.UserAgent = UserAgent;
+            WebService.Extensions.EnsureExtensionsDirectory();
+            _extensionsPaths = WebService.Extensions.GetExtensionsPath();
 
             if (incognito)
-            {
                 InitializeIncognito();
-            }
+
             else if (!string.IsNullOrWhiteSpace(_url))
-            {
                 InitializeNewWindow(profileFolder);
-            }
             else
-            {
                 InitializeBrowser();
-            }
         }
 
         // Methods
-        private void InitializeBrowser()
+        private async void InitializeBrowser()
         {
-            Browser = new WV2Service
+            WebService = new WV2Service(UIFramework, WebView21)
             {
                 ProfileName = "User1",
-                WebControl = WebView21,
-                ExtensionsPath = _extensionsPaths,
                 UserAgent = UserAgent
             };
-            Browser.PropertyChanged += WebView_PropertyChanged;
-            Browser.NewWindowRequested += OnNewWindowRequested;
-            Browser.InitializeWebView();
-            FormTextLabel.DataBindings.Add("Text", Browser, nameof(Browser.SiteTitle));
+            WebService.Extensions.ExtensionsPath = _extensionsPaths;
+            WebService.PropertyChanged += WebView_PropertyChanged;
+            WebService.NewWindowRequested += OnNewWindowRequested;
+            WebService.InitializeBrowser();
+            FormTextLabel.DataBindings.Add("Text", WebService, nameof(WebService.SiteTitle));
         }
         private void InitializeNewWindow(string profileFolder)
         {
-            if (profileFolder == null) { return; }
+            if (profileFolder == null)  return; 
+
             _newWindow = true;
             MenuButton.Visible = false;
             URLTextBox.Size = new Size(252, 23);
-            Browser = new WV2Service();
-            Browser.UserAgent = UserAgent;
-            Browser.WebViewControl = WebView21;
-            Browser.PropertyChanged += WebView_PropertyChanged;
-            Browser.NewWindowRequested += OnNewWindowRequested;
-            Browser.InitializeWebViewNewTab(profileFolder);
-            FormTextLabel.DataBindings.Add("Text", Browser, nameof(Browser.SiteTitle));
+            WebService = new WV2Service(UIFramework, WebView21);
+            WebService.UserAgent = UserAgent;
+            WebService.PropertyChanged += WebView_PropertyChanged;
+            WebService.NewWindowRequested += OnNewWindowRequested;
+            WebService.InitializeNewTab(profileFolder);
+            FormTextLabel.DataBindings.Add("Text", WebService, nameof(WebService.SiteTitle));
         }
         private void InitializeIncognito()
         {
             FormTextLabel.Text = "Private";
-            List<string> ublock = _extensionsPaths.Where(dir => dir.Contains("uBlock0")).ToList();
-
-            Browser = new WV2Service
+            List<string> ublock = _extensionsPaths.Where(dir => dir.Contains("uBlock")).ToList();
+            WebService = new WV2Service(UIFramework, WebView21)
             {
                 ProfileName = "User1",
-                WebViewControl = WebView21,
-                ExtensionsPath = ublock,
                 UserAgent = UserAgent
             };
-            Browser.PropertyChanged += WebView_PropertyChanged;
-            Browser.Incognito_InitializeWebView();
+            WebService.Extensions.ExtensionsPath = ublock;
+            WebService.PropertyChanged += WebView_PropertyChanged;
+            WebService.Incognito_InitializeWebView();
         }
         private void EnableBorderlessWindows()
         {
@@ -106,32 +102,34 @@ namespace MobileView.Winforms
         }
         private void OpenNewWindow(string link)
         {
-            Form newWindow = new Form_Main(currentForm: this, url: link, profileFolder: Browser.ProfileFolder);
-            newWindow.Show();
+            using (Form newWindow = new Form_Main(currentForm: this, url: link, profileFolder: WebService.ProfileFolder))
+            {
+                newWindow.Show();
+            }
         }
         private async void ViewExtensions()
         {
-            List<string> extensions = await Browser.GetExtensionsList();
+            List<string> extensions = await WebService.Extensions.GetExtensionsList();
             string extensionstring = string.Join(",\n", extensions);
             MessageBox.Show(extensionstring);
         }
         private async void GetFavorites()
         {
-            Dictionary<string, string> favorites = await Browser.GetFavoritesDict();
-            if (favorites == null) { return; }
-            foreach (var kvp in favorites)
-            {
-                ToolStripMenuItem favoritesMenuItem = new ToolStripMenuItem(kvp.Key);
-                favoritesMenuItem.Click += (sender, e) => Browser.Navigation.GoTo(kvp.Value);
-                favoritesToolStripMenuItem.DropDownItems.Add(favoritesMenuItem);
-            }
+            //Dictionary<string, string> favorites = await WebService.GetFavoritesDict();
+            //if (favorites == null) { return; }
+            //foreach (var kvp in favorites)
+            //{
+            //    ToolStripMenuItem favoritesMenuItem = new ToolStripMenuItem(kvp.Key);
+            //    favoritesMenuItem.Click += (sender, e) => WebService.Navigation.GoTo(kvp.Value);
+            //    favoritesToolStripMenuItem.DropDownItems.Add(favoritesMenuItem);
+            //}
         }
         private async void OnFormLoad()
         {
             if (_incognito) { await Task.Delay(1000); }
-            if (!string.IsNullOrWhiteSpace(_url)) { Browser.Navigation.NewTabGoTo(_url); return; }
+            if (!string.IsNullOrWhiteSpace(_url)) { WebService.Navigation.NewTabGoTo(_url); return; }
             GetFavorites();
-            Browser.Navigation.GoTo("www.google.com");
+            WebService.Navigation.GoTo("www.google.com");
         }
 
         // This method overrides WndProc to pass specific window messages (e.g., WM_NCHITTEST)
@@ -158,17 +156,17 @@ namespace MobileView.Winforms
         }
         private void WebView_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(Browser.URL)) { URLTextBox.Text = Browser.URL; } //add a oneway binding to URL
+            if (e.PropertyName == nameof(WebService.URL)) { URLTextBox.Text = WebService.URL; } //add a oneway binding to URL
         }
         private void Form_Main_Load(object sender, EventArgs e)
         {
             OnFormLoad();
         }
-        private void Form_Main_FormClosing(object sender, FormClosingEventArgs e)
+        private async void Form_Main_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (_incognito)
             {
-                Browser.Navigation.Incognito_DisposeSession();
+                await WebService.Navigation.Incognito_DisposeSession();
             }
             if (_incognito || _newWindow)
             {
@@ -184,11 +182,11 @@ namespace MobileView.Winforms
         }
         private void ReloadButton_Click(object sender, EventArgs e)
         {
-            Browser.Navigation.Reload();
+            WebService.Navigation.Reload();
         }
         private void BackButton_Click(object sender, EventArgs e)
         {
-            Browser.Navigation.GoBack();
+            WebService.Navigation.GoBack();
         }
         private void URLTextBox_KeyDown(object sender, KeyEventArgs e)
         {
@@ -196,7 +194,7 @@ namespace MobileView.Winforms
             {
                 e.SuppressKeyPress = true;
                 WebView21.Focus();
-                Browser.Navigation.GoTo(URLTextBox.Text);
+                WebService.Navigation.GoTo(URLTextBox.Text);
             }
         }
         private void URLTextBox_DoubleClick(object sender, EventArgs e)
@@ -209,11 +207,11 @@ namespace MobileView.Winforms
         // Menu Strip
         private void ClearAllBrowserDataToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Browser.Clear.AllBrowserData();
+            //WebService.Clear.AllBrowserData();
         }
         private void ClearAllBrowsingDataToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            Browser.Clear.AllBrowsingData();
+            //WebService.Clear.AllBrowsingData();
         }
         private void IncognitoToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -241,7 +239,7 @@ namespace MobileView.Winforms
         }
         private void ViewHistoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (Form_HistoryManager historyManager = new Form_HistoryManager(Browser, this))
+            using (Form_HistoryManager historyManager = new Form_HistoryManager(WebService, this))
             {
                 this.Hide();
                 historyManager.ShowDialog();
@@ -249,7 +247,7 @@ namespace MobileView.Winforms
             }
             this.Show();
             MenuButton.PerformClick();
-            Browser.WebControl.Focus();
+            WebService.WebControl.Focus();
         }
     }
 }
