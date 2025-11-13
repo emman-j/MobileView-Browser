@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35303.130
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MobileView-Wpf", "MobileView-Wpf\MobileView-Wpf.csproj", "{5E59D533-D913-49F5-B3BB-F258844FEF16}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MobileView", "MobileView-Winforms\MobileView.csproj", "{C9E2CF90-00A7-46F5-8B83-FDD18C810BB0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MobileView.Core", "MobileView.Core\MobileView.Core.csproj", "{CB809B0A-FDAC-44A5-847E-B1E762970FCE}"
@@ -16,16 +14,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MobileView.Winforms", "MobileView.Winforms\MobileView.Winforms.csproj", "{CD5C0EA8-7C89-4FA4-861B-E621622E0B63}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MobileView.Wpf", "MobileView.Wpf\MobileView.Wpf.csproj", "{5E59D533-D913-49F5-B3BB-F258844FEF16}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5E59D533-D913-49F5-B3BB-F258844FEF16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5E59D533-D913-49F5-B3BB-F258844FEF16}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5E59D533-D913-49F5-B3BB-F258844FEF16}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5E59D533-D913-49F5-B3BB-F258844FEF16}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C9E2CF90-00A7-46F5-8B83-FDD18C810BB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C9E2CF90-00A7-46F5-8B83-FDD18C810BB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9E2CF90-00A7-46F5-8B83-FDD18C810BB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -38,6 +34,10 @@ Global
 		{CD5C0EA8-7C89-4FA4-861B-E621622E0B63}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD5C0EA8-7C89-4FA4-861B-E621622E0B63}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD5C0EA8-7C89-4FA4-861B-E621622E0B63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E59D533-D913-49F5-B3BB-F258844FEF16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E59D533-D913-49F5-B3BB-F258844FEF16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E59D533-D913-49F5-B3BB-F258844FEF16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E59D533-D913-49F5-B3BB-F258844FEF16}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
