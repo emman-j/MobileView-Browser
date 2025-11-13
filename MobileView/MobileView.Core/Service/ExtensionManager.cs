@@ -1,175 +1,161 @@
 ﻿using Microsoft.Web.WebView2.Core;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MobileView.Core.Service
 {
     public class ExtensionManager
     {
         private WV2Service _WV2Service;
-        private string _addExtensionsDirectory => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Extensions_Local");
-        private string localExtensionsPath => (!string.IsNullOrWhiteSpace(_WV2Service._TempFolder)) ?
+        private string _addExtensionsDirectory => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Extensions_Local"); //Path to add extensions from
+        private string _localExtensionsPath => (!string.IsNullOrWhiteSpace(_WV2Service._TempFolder)) ? // Extensions installation path
             Path.Combine(_WV2Service._TempFolder, "EBWebView", "Default", "Extensions_Local") :
             Path.Combine(_WV2Service.ProfileFolder, "EBWebView", "Default", "Extensions_Local");
+        public List<string> ExtensionsPath { get; set; }
 
         public ExtensionManager(WV2Service wv2Service)
         {
             _WV2Service = wv2Service;
         }
 
+        private async Task CopyDirectoryAsync(string sourceDir, string destinationDir) => await Task.Run(() => CopyDirectory(sourceDir, destinationDir));
         private void CopyDirectory(string sourceDir, string destinationDir)
-        {
-            Directory.CreateDirectory(destinationDir);
-
-            foreach (var file in Directory.GetFiles(sourceDir))
-            {
-                string destFile = Path.Combine(destinationDir, Path.GetFileName(file));
-                File.Copy(file, destFile, overwrite: true);
-            }
-
-            foreach (var directory in Directory.GetDirectories(sourceDir))
-            {
-                string destDir = Path.Combine(destinationDir, Path.GetFileName(directory));
-                CopyDirectory(directory, destDir);
-            }
-        }
-        public void EnsureExtensionsDirectory() // added to allow easy installation of extensions for now
-        {
-            if (!Directory.Exists(_addExtensionsDirectory))
-            {
-                Directory.CreateDirectory(_addExtensionsDirectory);
-            }
-        }
-        private async void InitializeExtensions()
-        {
-            List<string> extensionsPath = _WV2Service.ExtensionsPath;
-            if (extensionsPath == null || !extensionsPath.Any()) { return; }
-
-            int count = 0;
-            foreach (string originalExtensionPath in extensionsPath)
-            {
-                if (!Directory.Exists(originalExtensionPath))
-                { count++; continue; }
-            }
-            if (count == extensionsPath.Count()) { return; }
-
-
-            await _WV2Service.WebControl.EnsureCoreWebView2Async(_WV2Service.Environment);
-            CoreWebView2BrowserExtension extension = await AddExtensionsAsync();
-            await extension.EnableAsync(true);
-        }
-        private async Task<CoreWebView2BrowserExtension> AddExtensionsAsync()
         {
             try
             {
-                CoreWebView2BrowserExtension extension = null;
+                Directory.CreateDirectory(destinationDir);
 
-                if (!Directory.Exists(localExtensionsPath))
+                foreach (var file in Directory.GetFiles(sourceDir))
                 {
-                    Directory.CreateDirectory(localExtensionsPath);
+                    string destFile = Path.Combine(destinationDir, Path.GetFileName(file));
+                    File.Copy(file, destFile, overwrite: true);
                 }
 
-                foreach (string originalExtensionPath in _WV2Service.ExtensionsPath)
+                foreach (var directory in Directory.GetDirectories(sourceDir))
                 {
-
-                    string extensionName = Path.GetFileName(originalExtensionPath);
-                    string localExtensionPath = Path.Combine(localExtensionsPath, extensionName);
-
-                    if (!Directory.Exists(localExtensionPath))
-                    {
-                        CopyDirectory(originalExtensionPath, localExtensionPath);
-                    }
-
-                    CoreWebView2Profile profile = await _WV2Service.GetProfile();
-                    extension = await profile.AddBrowserExtensionAsync(localExtensionPath);
+                    string destDir = Path.Combine(destinationDir, Path.GetFileName(directory));
+                    CopyDirectory(directory, destDir);
                 }
-                return extension;
             }
             catch (Exception ex)
             {
-                throw new Exception($"Failed to load extensions:\n{ex.Message}");
+                _WV2Service.LogError?.Invoke(ex);
             }
         }
-        private async Task<CoreWebView2BrowserExtension> AddExtensionsAsync(string extensionPath)
+        private async Task AddExtensionsAsync()
+        {
+            try
+            {
+                if(ExtensionsPath == null || ExtensionsPath.Count == 0)
+                    throw new ArgumentNullException(nameof(ExtensionsPath), "No extensions to load.");
+
+                foreach (string originalExtensionPath in ExtensionsPath)
+                {
+                    CoreWebView2BrowserExtension extension = await AddExtensionAsync(originalExtensionPath);
+                    if (extension != null)
+                        await extension.EnableAsync(true);
+                }
+            }
+            catch (Exception ex)
+            {
+                _WV2Service.LogError?.Invoke(ex);
+            }
+        }
+        private async Task<CoreWebView2BrowserExtension> AddExtensionAsync(string extensionPath)
         {
             try
             {
                 CoreWebView2BrowserExtension extension = null;
 
-                if (!Directory.Exists(localExtensionsPath))
+                if (!Directory.Exists(_localExtensionsPath))
                 {
-                    Directory.CreateDirectory(localExtensionsPath);
+                    Directory.CreateDirectory(_localExtensionsPath);
                 }
 
                 string extensionName = Path.GetFileName(extensionPath);
-                string localExtensionPath = Path.Combine(localExtensionsPath, extensionName);
+                string localExtensionPath = Path.Combine(_localExtensionsPath, extensionName);
 
                 if (!Directory.Exists(localExtensionPath))
                 {
                     CopyDirectory(extensionPath, localExtensionPath);
                 }
 
-                CoreWebView2Profile profile = await _WV2Service.GetProfile();
+                await _WV2Service.WebControl.EnsureCoreWebView2Async(_WV2Service.Environment);
+                CoreWebView2Profile profile = await _WV2Service.GetProfileAsync();
                 extension = await profile.AddBrowserExtensionAsync(localExtensionPath);
 
                 return extension;
             }
             catch (Exception ex)
             {
-                throw new Exception($"Failed to load extensions:\n{ex.Message}");
+                _WV2Service.LogError?.Invoke(ex);
             }
+            return null;
         }
-        private async Task<IReadOnlyList<CoreWebView2BrowserExtension>> GetBrowserExtensionsListAsync()
+        public async Task InitializeExtensionsAsync()
         {
             try
             {
-                CoreWebView2Profile profile = await _WV2Service.GetProfile();
-                IReadOnlyList<CoreWebView2BrowserExtension> extensions = await profile.GetBrowserExtensionsAsync();
+                if (ExtensionsPath == null || ExtensionsPath.Count == 0) return;
 
-                Debug.WriteLine("Installed Extensions:");
-                foreach (var extension in extensions)
+                int count = 0;
+                foreach (string originalExtensionPath in ExtensionsPath)
                 {
-                    Debug.WriteLine($"- {extension.Name}, ID: {extension.Id}");
+                    if (Directory.Exists(originalExtensionPath))
+                        count++;
                 }
-                return extensions;
+                EnsureExtensionsDirectory(_localExtensionsPath);
+
+                int toInstallCount = GetExtensionsPath().Count;
+                int installedCount = (await GetExtensionsList()) .Count(x => !x.Contains("Microsoft Clipboard Extension") && !x.Contains("Microsoft Edge PDF Viewer"));
+                //if (toInstallCount == installedCount) return;
+                //if (GetExtensionsPath().Count == GetExtensionsPath(_localExtensionsPath).Count) return;
+
+                await AddExtensionsAsync();
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error retrieving extensions:\n{ex.Message}");
+                _WV2Service.LogError?.Invoke(ex);
+            }
+        }
+        // added to allow easy installation of extensions for now
+        public void EnsureExtensionsDirectory() => EnsureExtensionsDirectory(_addExtensionsDirectory);
+        public void EnsureExtensionsDirectory(string dir)
+        {
+            try
+            {
+                if (!Directory.Exists(dir))
+                {
+                    Directory.CreateDirectory(dir);
+                }
+            }
+            catch (Exception ex)
+            {
+                _WV2Service.LogError?.Invoke(ex);
             }
         }
         public async Task<List<string>> GetExtensionsList()
         {
             List<string> extensions = new List<string>();
 
-            IReadOnlyList<CoreWebView2BrowserExtension> extensionsList = await GetBrowserExtensionsListAsync();
-
-            foreach (var extension in extensionsList)
+            try
             {
-                extensions.Add(extension.Name);
-                Console.WriteLine($"- {extension.Name}, ID: {extension.Id}");
+                CoreWebView2Profile profile = await _WV2Service.GetProfileAsync();
+                IReadOnlyList<CoreWebView2BrowserExtension> extensionsList = await profile.GetBrowserExtensionsAsync();
+
+                foreach (var extension in extensionsList)
+                {
+                    extensions.Add(extension.Name);
+                    Console.WriteLine($"- {extension.Name}, ID: {extension.Id}");
+                }
+            }
+            catch (Exception ex)
+            {
+                _WV2Service.LogError?.Invoke(ex);
             }
 
             return extensions;
         }
-        public List<string> GetExtensionsPath()
-        {
-            string[] subDirectories = Directory.GetDirectories(_addExtensionsDirectory);
-
-            List<string> pathList = new List<string>();
-
-            foreach (string subDir in subDirectories)
-            {
-                pathList.Add(subDir);
-            }
-
-            return pathList;
-        }
+        public List<string> GetExtensionsPath() => GetExtensionsPath(_addExtensionsDirectory);
+        public List<string> GetExtensionsPath(string path) => Directory.GetDirectories(path).ToList();
     }
 }
