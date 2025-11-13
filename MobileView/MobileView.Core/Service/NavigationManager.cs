@@ -20,51 +20,6 @@ namespace MobileView.Core.Service
             _WV2Service = wv2Service;
         }
 
-        public async void GoTo(string address) => await NavigateTo(address);
-        public async void NewTabGoTo(string address) => await NavigateToNewTab(address);
-        public void Reload() => WebControl.Reload();
-        public void GoBack() { if (WebControl.CanGoBack) WebControl.GoBack(); }
-        public void GoForward() { if (WebControl.CanGoForward) WebControl.GoForward(); }
-        public async Task Incognito_DisposeSession()
-        {
-            try
-            {
-                string tempfolderpath = _WV2Service._TempFolder;
-                int maxRetries = 5;
-                int delayMilliseconds = 2000;
-                for (int attempt = 1; attempt <= maxRetries; attempt++)
-                {
-                    try
-                    {
-                        //ensure all processes are closed first
-                        await Task.Run(() =>
-                        {
-                            if (!Directory.Exists(tempfolderpath)) { return; }
-                            Directory.Delete(tempfolderpath, true);
-                        });
-                        _WV2Service._TempFolder = string.Empty;
-                    }
-                    catch
-                    {
-                        await Task.Delay(delayMilliseconds * attempt);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _WV2Service.LogError?.Invoke(ex);
-            }
-        }
-        public async Task EnableNewWindowRequest()
-        {
-            WebControl.CoreWebView2.NewWindowRequested += CoreWebView2_NewWindowRequested;
-        }
-        public async Task EnableNavigationMonitoring()
-        {
-            WebControl.NavigationStarting += OnNavigationStarting;
-            WebControl.NavigationCompleted += OnNavigationCompleted;
-        }
-
         private string EnsureHttpsPrefix(string url)
         {
             try
@@ -207,6 +162,51 @@ namespace MobileView.Core.Service
             {
                 _WV2Service.LogError?.Invoke(ex);
             }
+        }
+
+        public async void GoTo(string address) => await NavigateTo(address);
+        public async void NewTabGoTo(string address) => await NavigateToNewTab(address);
+        public void Reload() => WebControl.Reload();
+        public void GoBack() { if (WebControl.CanGoBack) WebControl.GoBack(); }
+        public void GoForward() { if (WebControl.CanGoForward) WebControl.GoForward(); }
+        public async Task Incognito_DisposeSession()
+        {
+            try
+            {
+                string tempfolderpath = _WV2Service._TempFolder;
+                int maxRetries = 5;
+                int delayMilliseconds = 2000;
+                for (int attempt = 1; attempt <= maxRetries; attempt++)
+                {
+                    try
+                    {
+                        //ensure all processes are closed first
+                        await Task.Run(() =>
+                        {
+                            if (!Directory.Exists(tempfolderpath)) { return; }
+                            Directory.Delete(tempfolderpath, true);
+                        });
+                        _WV2Service._TempFolder = string.Empty;
+                    }
+                    catch
+                    {
+                        await Task.Delay(delayMilliseconds * attempt);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _WV2Service.LogError?.Invoke(ex);
+            }
+        }
+        public async Task EnableNewWindowRequest()
+        {
+            WebControl.CoreWebView2.NewWindowRequested += CoreWebView2_NewWindowRequested;
+        }
+        public async Task EnableNavigationMonitoring()
+        {
+            WebControl.NavigationStarting += OnNavigationStarting;
+            WebControl.NavigationCompleted += OnNavigationCompleted;
         }
     }
 }

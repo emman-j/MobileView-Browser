@@ -141,9 +141,7 @@ namespace MobileView.Winforms
             base.WndProc(ref m);
 
             if (m.Msg == WM_NCHITTEST)
-            {
                 formManager.HandleWndProc(ref m);
-            }
         }
 
         // Form Events / Controls
