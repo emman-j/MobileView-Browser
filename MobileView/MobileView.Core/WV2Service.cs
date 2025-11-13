@@ -43,48 +43,10 @@ namespace MobileView.Core
             LogError = LogE;
         }
 
+        // For debug only
         void LogE(Exception ex, [CallerMemberName] string sender = "")
         {
             Debug.WriteLine($"Error in {sender}: {ex.Message}");
-        }
-        public async void InitializeBrowser()
-        {
-            Environment = await InitializeWebEnviromentAsync(ProfileName);
-            InitializeWebViewSession();
-        }
-        public async void InitializeNewTab(string ProfileFolder)
-        {
-            Environment = await InitializeSharedWebEnviromentAsync(ProfileFolder);
-            InitializeWebViewSession(false);
-        }
-        public async void Incognito_InitializeWebView()
-        {
-            Environment = await Incognito_InitializeWebEnviromentAsync("Incognito");
-            InitializeWebViewSession();
-        }
-        private async void InitializeWebViewSession(bool initializeExtensions = true)
-        {
-            InitializeProfile();
-            await EnableMobileViewAsync();
-            string ver = GetBrowserVersionString();
-            if (initializeExtensions)
-                await Extensions.InitializeExtensionsAsync();
-            await Navigation.EnableNewWindowRequest();
-            await Navigation.EnableNavigationMonitoring();
-        }
-        public async void InitializeProfile() => Profile = await GetProfileAsync();
-        public async Task<CoreWebView2Profile> GetProfileAsync()
-        {
-            try
-            {
-                await WebControl.EnsureCoreWebView2Async(Environment);
-                return WebControl.CoreWebView2.Profile;
-            }
-            catch (Exception ex)
-            {
-                LogError(ex);
-            }
-            return null;
         }
         private async Task<CoreWebView2Environment> InitializeWebEnviromentAsync(string profileName)
         {
@@ -97,7 +59,7 @@ namespace MobileView.Core
 
                 CoreWebView2EnvironmentOptions environmentOptions = new CoreWebView2EnvironmentOptions { AreBrowserExtensionsEnabled = true };
                 CoreWebView2Environment environment = await CoreWebView2Environment.CreateAsync(null, ProfileFolder, environmentOptions);
-                await WebControl.EnsureCoreWebView2Async(environment);
+                await EnsureCoreWebView2Async(environment);
                 return environment;
             }
             catch (Exception ex)
@@ -121,7 +83,7 @@ namespace MobileView.Core
                 options.IsInPrivateModeEnabled = true;
                 options.ProfileName = profileName;
 
-                await WebControl.EnsureCoreWebView2Async(environment, options);
+                await EnsureCoreWebView2Async(environment, options);
                 return environment;
             }
             catch (Exception ex)
@@ -136,7 +98,7 @@ namespace MobileView.Core
             {
                 CoreWebView2EnvironmentOptions environmentOptions = new CoreWebView2EnvironmentOptions { AreBrowserExtensionsEnabled = true };
                 CoreWebView2Environment environment = await CoreWebView2Environment.CreateAsync(null, FolderPath, environmentOptions);
-                await WebControl.EnsureCoreWebView2Async(environment);
+                await EnsureCoreWebView2Async(environment);
                 return environment;
             }
             catch (Exception ex)
@@ -145,47 +107,11 @@ namespace MobileView.Core
             }
             return null;
         }
-
-        //private async void EnableMobileView()
-        //{
-        //    await WebControl.EnsureCoreWebView2Async(Environment);
-        //    //webView.CoreWebView2.Settings.UserAgent = @"Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Mobile Safari/537.36";
-        //    WebControl.CoreWebView2.Settings.UserAgent = UserAgent;
-
-        //    // Set viewport dimensions to match Samsung Galaxy Note 20 Ultra
-        //    await WebControl.CoreWebView2.ExecuteScriptAsync(@"
-        //        Object.defineProperty(window, 'innerWidth', { get: () => 412 });
-        //        Object.defineProperty(window, 'innerHeight', { get: () => 915 });
-        //        Object.defineProperty(window.screen, 'width', { get: () => 412 });
-        //        Object.defineProperty(window.screen, 'height', { get: () => 915 });
-        //        Object.defineProperty(window.screen, 'devicePixelRatio', { get: () => 3.5 });
-        //    ");
-
-        //    // Inject viewport meta tag for responsive design
-        //    await WebControl.CoreWebView2.ExecuteScriptAsync(@"
-        //        const meta = document.createElement('meta');
-        //        meta.name = 'viewport';
-        //        meta.content = 'width=device-width, initial-scale=1.0';
-        //        document.head.appendChild(meta);
-        //    ");
-        //}
-        public string GetBrowserVersionString()
-        {
-            try
-            {
-                return CoreWebView2Environment.GetAvailableBrowserVersionString();
-            }
-            catch (Exception ex)
-            {
-                LogError(ex);
-            }
-            return string.Empty;
-        }
         private async Task EnableMobileViewAsync(int width = 412, int height = 915, double devicePixelRatio = 3.5)
         {
             try
             {
-                await WebControl.EnsureCoreWebView2Async(Environment);
+                await EnsureCoreWebView2Async(Environment);
 
                 // Set custom User-Agent if provided
                 if (!string.IsNullOrEmpty(UserAgent))
@@ -220,6 +146,61 @@ namespace MobileView.Core
                 LogError(ex);
             }
         }
+        private async void InitializeWebViewSession(bool initializeExtensions = true)
+        {
+            InitializeProfile();
+            await EnableMobileViewAsync();
+            string ver = GetBrowserVersionString();
+            if (initializeExtensions)
+                await Extensions.InitializeExtensionsAsync();
+            await Navigation.EnableNewWindowRequest();
+            await Navigation.EnableNavigationMonitoring();
+        }
+        public async void InitializeBrowser()
+        {
+            Environment = await InitializeWebEnviromentAsync(ProfileName);
+            InitializeWebViewSession();
+        }
+        public async void InitializeNewTab(string ProfileFolder)
+        {
+            Environment = await InitializeSharedWebEnviromentAsync(ProfileFolder);
+            InitializeWebViewSession(false);
+        }
+        public async void Incognito_InitializeWebView()
+        {
+            Environment = await Incognito_InitializeWebEnviromentAsync("Incognito");
+            InitializeWebViewSession();
+        }
+        public async void InitializeProfile() => Profile = await GetProfileAsync();
+        public async Task<CoreWebView2Profile> GetProfileAsync()
+        {
+            try
+            {
+                await EnsureCoreWebView2Async(Environment);
+                return WebControl.CoreWebView2.Profile;
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+            }
+            return null;
+        }
+        public string GetBrowserVersionString()
+        {
+            try
+            {
+                return CoreWebView2Environment.GetAvailableBrowserVersionString();
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+            }
+            return string.Empty;
+        }
+        public async Task EnsureCoreWebView2Async() => await EnsureCoreWebView2Async(Environment);
+        public async Task EnsureCoreWebView2Async(CoreWebView2Environment environment) => await WebControl.EnsureCoreWebView2Async(environment);
+        public Task EnsureCoreWebView2Async(CoreWebView2Environment environment, CoreWebView2ControllerOptions controllerOptions)
+            => WebControl.EnsureCoreWebView2Async(environment, controllerOptions);
         public void RaiseNavigationChanged(object? sender, string message)
         {
             NavigationChanged?.Invoke(sender, message);

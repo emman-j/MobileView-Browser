@@ -66,22 +66,17 @@ namespace MobileView.Core.Service
             {
                 CoreWebView2BrowserExtension extension = null;
 
-                if (!Directory.Exists(_localExtensionsPath))
-                {
-                    Directory.CreateDirectory(_localExtensionsPath);
-                }
+                EnsureDirectory(_localExtensionsPath);
 
                 string extensionName = Path.GetFileName(extensionPath);
-                string localExtensionPath = Path.Combine(_localExtensionsPath, extensionName);
+                string newExtensionPath = Path.Combine(_localExtensionsPath, extensionName);
 
-                if (!Directory.Exists(localExtensionPath))
-                {
-                    CopyDirectory(extensionPath, localExtensionPath);
-                }
+                if (!Directory.Exists(newExtensionPath))
+                    CopyDirectory(extensionPath, newExtensionPath);
 
-                await _WV2Service.WebControl.EnsureCoreWebView2Async(_WV2Service.Environment);
+                await _WV2Service.EnsureCoreWebView2Async();
                 CoreWebView2Profile profile = await _WV2Service.GetProfileAsync();
-                extension = await profile.AddBrowserExtensionAsync(localExtensionPath);
+                extension = await profile.AddBrowserExtensionAsync(newExtensionPath);
 
                 return extension;
             }
@@ -103,12 +98,11 @@ namespace MobileView.Core.Service
                     if (Directory.Exists(originalExtensionPath))
                         count++;
                 }
-                EnsureExtensionsDirectory(_localExtensionsPath);
+                EnsureDirectory(_localExtensionsPath);
 
                 int toInstallCount = GetExtensionsPath().Count;
                 int installedCount = (await GetExtensionsList()) .Count(x => !x.Contains("Microsoft Clipboard Extension") && !x.Contains("Microsoft Edge PDF Viewer"));
-                //if (toInstallCount == installedCount) return;
-                //if (GetExtensionsPath().Count == GetExtensionsPath(_localExtensionsPath).Count) return;
+                if (toInstallCount == installedCount) return;
 
                 await AddExtensionsAsync();
             }
@@ -118,8 +112,8 @@ namespace MobileView.Core.Service
             }
         }
         // added to allow easy installation of extensions for now
-        public void EnsureExtensionsDirectory() => EnsureExtensionsDirectory(_addExtensionsDirectory);
-        public void EnsureExtensionsDirectory(string dir)
+        public void EnsureDirectory() => EnsureDirectory(_addExtensionsDirectory);
+        public void EnsureDirectory(string dir)
         {
             try
             {

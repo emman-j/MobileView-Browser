@@ -40,7 +40,7 @@ namespace MobileView.Winforms
             EnableBorderlessWindows();
 
             WebService.UserAgent = UserAgent;
-            WebService.Extensions.EnsureExtensionsDirectory();
+            WebService.Extensions.EnsureDirectory();
             _extensionsPaths = WebService.Extensions.GetExtensionsPath();
 
             if (incognito)

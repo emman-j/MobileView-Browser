@@ -37,6 +37,7 @@ namespace MobileView.Core
             _uiFramework = ui;
             SubscribeEvents();
         }
+
         private dynamic GetBaseWebView()
         {
             switch (_uiFramework)
@@ -63,13 +64,13 @@ namespace MobileView.Core
                     break;
             }
         }
-        //public Task EnsureCoreWebView2Async() => EnsureCoreWebView2Async(CoreWebView2.Environment);
+
         public Task EnsureCoreWebView2Async(CoreWebView2Environment environment) => GetBaseWebView().EnsureCoreWebView2Async(environment);
         public Task EnsureCoreWebView2Async(CoreWebView2Environment environment, CoreWebView2ControllerOptions controllerOptions) 
             => GetBaseWebView().EnsureCoreWebView2Async(environment, controllerOptions);
         public void GoBack() => GetBaseWebView().GoBack();
         public void GoForward() => GetBaseWebView().GoForward();
-        public void Navigate(string uri) => GetBaseWebView().Navigate(uri);
+        public void Navigate(string uri) => CoreWebView2.Navigate(uri);
         public void Reload() => GetBaseWebView().Reload();
         public void Focus() => GetBaseWebView().Focus();
     }

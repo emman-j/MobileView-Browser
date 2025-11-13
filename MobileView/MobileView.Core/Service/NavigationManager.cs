@@ -13,8 +13,8 @@ namespace MobileView.Core.Service
     public class NavigationManager
     {
         private WV2Service _WV2Service;
-
         private WebViewWrapper WebControl => _WV2Service.WebControl;
+
         public NavigationManager(WV2Service wv2Service)
         {
             _WV2Service = wv2Service;
@@ -23,14 +23,8 @@ namespace MobileView.Core.Service
         public async void GoTo(string address) => await NavigateTo(address);
         public async void NewTabGoTo(string address) => await NavigateToNewTab(address);
         public void Reload() => WebControl.Reload();
-        public void GoBack()
-        {
-            if (WebControl.CanGoBack) WebControl.GoBack();
-        }
-        public void GoForward()
-        {
-            if (WebControl.CanGoForward) WebControl.GoForward();
-        }
+        public void GoBack() { if (WebControl.CanGoBack) WebControl.GoBack(); }
+        public void GoForward() { if (WebControl.CanGoForward) WebControl.GoForward(); }
         public async Task Incognito_DisposeSession()
         {
             try
@@ -116,16 +110,16 @@ namespace MobileView.Core.Service
                 if (IsURLSuffixValid(address))
                 {
                     _WV2Service.URL = EnsureHttpsPrefix(address);
-                    await WebControl.EnsureCoreWebView2Async(_WV2Service.Environment);
-                    WebControl.CoreWebView2.Navigate(_WV2Service.URL);
+                    await _WV2Service.EnsureCoreWebView2Async();
+                    WebControl.Navigate(_WV2Service.URL);
                     return;
                 }
                 string searchQuery = Uri.EscapeDataString(address);
                 string searchUrl = "https://www.google.com/search?q=" + searchQuery;
                 _WV2Service.URL = (new Uri(searchUrl)).ToString();
 
-                await WebControl.EnsureCoreWebView2Async(_WV2Service.Environment);
-                WebControl.CoreWebView2.Navigate(_WV2Service.URL);
+                await _WV2Service.EnsureCoreWebView2Async();
+                WebControl.Navigate(_WV2Service.URL);
             }
             catch (Exception ex)
             {
@@ -139,7 +133,7 @@ namespace MobileView.Core.Service
                 if (IsURLSuffixValid(address))
                 {
                     _WV2Service.URL = EnsureHttpsPrefix(address);
-                    await WebControl.EnsureCoreWebView2Async(_WV2Service.Environment);
+                    await _WV2Service.EnsureCoreWebView2Async();
                     WebControl.Source = new Uri(_WV2Service.URL);
                     return;
                 }
@@ -148,7 +142,7 @@ namespace MobileView.Core.Service
                 string searchUrl = "https://www.google.com/search?q=" + searchQuery;
                 _WV2Service.URL = (new Uri(searchUrl)).ToString();
 
-                await WebControl.EnsureCoreWebView2Async(_WV2Service.Environment);
+                await _WV2Service.EnsureCoreWebView2Async();
                 WebControl.Source = new Uri(searchUrl);
             }
             catch (Exception ex)
