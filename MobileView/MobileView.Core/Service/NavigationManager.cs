@@ -20,8 +20,8 @@ namespace MobileView.Core.Service
             _WV2Service = wv2Service;
         }
 
-        public void GoTo(string address) => NavigateTo(address);
-        public void NewTabGoTo(string address) => NavigateToNewTab(address);
+        public async void GoTo(string address) => await NavigateTo(address);
+        public async void NewTabGoTo(string address) => await NavigateToNewTab(address);
         public void Reload() => WebControl.Reload();
         public void GoBack()
         {
@@ -31,134 +31,188 @@ namespace MobileView.Core.Service
         {
             if (WebControl.CanGoForward) WebControl.GoForward();
         }
-        public async void Incognito_DisposeSession()
+        public async Task Incognito_DisposeSession()
         {
-            string tempfolderpath = _WV2Service._TempFolder;
-            int maxRetries = 5;
-            int delayMilliseconds = 2000;
-            for (int attempt = 1; attempt <= maxRetries; attempt++)
+            try
             {
-                try
+                string tempfolderpath = _WV2Service._TempFolder;
+                int maxRetries = 5;
+                int delayMilliseconds = 2000;
+                for (int attempt = 1; attempt <= maxRetries; attempt++)
                 {
-                    //ensure all processes are closed first
-                    await Task.Run(() =>
+                    try
                     {
-                        if (!Directory.Exists(tempfolderpath)) { return; }
-                        Directory.Delete(tempfolderpath, true);
-                    });
-                    _WV2Service._TempFolder = string.Empty;
-                }
-                catch
-                {
-                    await Task.Delay(delayMilliseconds * attempt);
+                        //ensure all processes are closed first
+                        await Task.Run(() =>
+                        {
+                            if (!Directory.Exists(tempfolderpath)) { return; }
+                            Directory.Delete(tempfolderpath, true);
+                        });
+                        _WV2Service._TempFolder = string.Empty;
+                    }
+                    catch
+                    {
+                        await Task.Delay(delayMilliseconds * attempt);
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                _WV2Service.LogError?.Invoke(ex);
+            }
+        }
+        public async Task EnableNewWindowRequest()
+        {
+            WebControl.CoreWebView2.NewWindowRequested += CoreWebView2_NewWindowRequested;
+        }
+        public async Task EnableNavigationMonitoring()
+        {
+            WebControl.NavigationStarting += OnNavigationStarting;
+            WebControl.NavigationCompleted += OnNavigationCompleted;
         }
 
         private string EnsureHttpsPrefix(string url)
         {
-            if (!url.StartsWith("http://", StringComparison.OrdinalIgnoreCase) &&
-                !url.StartsWith("https://", StringComparison.OrdinalIgnoreCase) &&
-                !url.StartsWith("edge://", StringComparison.OrdinalIgnoreCase) &&
-                !url.StartsWith("chrome-extension://", StringComparison.OrdinalIgnoreCase))
+            try
             {
-                url = "https://" + url;
+                if (!url.StartsWith("http://", StringComparison.OrdinalIgnoreCase) &&
+                    !url.StartsWith("https://", StringComparison.OrdinalIgnoreCase) &&
+                    !url.StartsWith("edge://", StringComparison.OrdinalIgnoreCase) &&
+                    !url.StartsWith("chrome-extension://", StringComparison.OrdinalIgnoreCase))
+                {
+                    url = "https://" + url;
+                }
+            }
+            catch (Exception ex)
+            {
+                _WV2Service.LogError?.Invoke(ex);
             }
             return url;
         }
         private bool IsURLSuffixValid(string url)
         {
-            string[] validTLDs = { ".com", ".org", ".net", ".edu", ".gov", ".io", ".co", ".us", ".uk", ".ph", ".html" };
-            if (url.StartsWith("edge://", StringComparison.OrdinalIgnoreCase)) { return true; }
-            foreach (string tld in validTLDs)
+            try
             {
-                if (url.Contains(tld, StringComparison.OrdinalIgnoreCase))
+                string[] validTLDs = { ".com", ".org", ".net", ".edu", ".gov", ".io", ".co", ".us", ".uk", ".ph", ".html" };
+                if (url.StartsWith("edge://", StringComparison.OrdinalIgnoreCase)) { return true; }
+                foreach (string tld in validTLDs)
                 {
-                    return true;
+                    if (url.Contains(tld, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return true;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                _WV2Service.LogError?.Invoke(ex);
             }
             return false;
         }
-        private async void NavigateTo(string address)
+        private async Task NavigateTo(string address)
         {
-            if (IsURLSuffixValid(address))
+            try
             {
-                _WV2Service.URL = EnsureHttpsPrefix(address);
+                if (IsURLSuffixValid(address))
+                {
+                    _WV2Service.URL = EnsureHttpsPrefix(address);
+                    await WebControl.EnsureCoreWebView2Async(_WV2Service.Environment);
+                    WebControl.CoreWebView2.Navigate(_WV2Service.URL);
+                    return;
+                }
+                string searchQuery = Uri.EscapeDataString(address);
+                string searchUrl = "https://www.google.com/search?q=" + searchQuery;
+                _WV2Service.URL = (new Uri(searchUrl)).ToString();
+
                 await WebControl.EnsureCoreWebView2Async(_WV2Service.Environment);
                 WebControl.CoreWebView2.Navigate(_WV2Service.URL);
-                return;
             }
-            string searchQuery = Uri.EscapeDataString(address);
-            string searchUrl = "https://www.google.com/search?q=" + searchQuery;
-            _WV2Service.URL = (new Uri(searchUrl)).ToString();
-
-            await WebControl.EnsureCoreWebView2Async(_WV2Service.Environment);
-            WebControl.CoreWebView2.Navigate(_WV2Service.URL);
-        }
-        private async void NavigateToNewTab(string address)
-        {
-            if (IsURLSuffixValid(address))
+            catch (Exception ex)
             {
-                _WV2Service.URL = EnsureHttpsPrefix(address);
-                await WebControl.EnsureCoreWebView2Async();
-                WebControl.Source = new Uri(_WV2Service.URL);
-                return;
+                _WV2Service.LogError?.Invoke(ex);
             }
-
-            string searchQuery = Uri.EscapeDataString(address);
-            string searchUrl = "https://www.google.com/search?q=" + searchQuery;
-            _WV2Service.URL = (new Uri(searchUrl)).ToString();
-
-            await WebControl.EnsureCoreWebView2Async();
-            WebControl.Source = new Uri(searchUrl);
         }
-        private async void EnableNewWindowRequest()
+        private async Task NavigateToNewTab(string address)
         {
-            await WebControl.EnsureCoreWebView2Async();
-            WebControl.CoreWebView2.NewWindowRequested += CoreWebView2_NewWindowRequested;
-        }
-        private async void EnableNavigationMonitoring()
-        {
-            await WebControl.EnsureCoreWebView2Async();
-            WebControl.NavigationStarting += OnNavigationStarting;
-            WebControl.NavigationCompleted += OnNavigationCompleted;
+            try
+            {
+                if (IsURLSuffixValid(address))
+                {
+                    _WV2Service.URL = EnsureHttpsPrefix(address);
+                    await WebControl.EnsureCoreWebView2Async(_WV2Service.Environment);
+                    WebControl.Source = new Uri(_WV2Service.URL);
+                    return;
+                }
+
+                string searchQuery = Uri.EscapeDataString(address);
+                string searchUrl = "https://www.google.com/search?q=" + searchQuery;
+                _WV2Service.URL = (new Uri(searchUrl)).ToString();
+
+                await WebControl.EnsureCoreWebView2Async(_WV2Service.Environment);
+                WebControl.Source = new Uri(searchUrl);
+            }
+            catch (Exception ex)
+            {
+                _WV2Service.LogError?.Invoke(ex);
+            }
         }
         private void CoreWebView2_NewWindowRequested(object? sender, CoreWebView2NewWindowRequestedEventArgs e)
         {
-            _WV2Service.RaiseNewWindowRequested(sender, e);
+            try
+            {
+                _WV2Service.RaiseNewWindowRequested(sender, e);
 
-            //if (_WV2Service.NewWindowRequested == null)
-            //{
-            //    DialogResult result = MessageBox.Show($"A website wants to open a new window:\n{e.Uri}\n\nAllow this popup?", "Confirm Popup", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                //if (_WV2Service.NewWindowRequested == null)
+                //{
+                //    DialogResult result = MessageBox.Show($"A website wants to open a new window:\n{e.Uri}\n\nAllow this popup?", "Confirm Popup", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
-            //    if (result == DialogResult.Yes)
-            //    {
-            //        e.Handled = false;
-            //        //// Optional: Open in the current WebView
-            //        //NavigateTo(webviewControl, environment, e.Uri);
-            //        return;
-            //    }
-            //    e.Handled = true;
-            //    Debug.WriteLine($"Popup blocked: {e.Uri}");
-            //}
+                //    if (result == DialogResult.Yes)
+                //    {
+                //        e.Handled = false;
+                //        //// Optional: Open in the current WebView
+                //        //NavigateTo(webviewControl, environment, e.Uri);
+                //        return;
+                //    }
+                //    e.Handled = true;
+                //    Debug.WriteLine($"Popup blocked: {e.Uri}");
+                //}
+            }
+            catch (Exception ex)
+            {
+                _WV2Service.LogError?.Invoke(ex);
+            }
         }
         private async void OnNavigationCompleted(object? sender, CoreWebView2NavigationCompletedEventArgs e)
         {
-            if (e.IsSuccess)
+            try
             {
-                string siteTitle = await WebControl.CoreWebView2.ExecuteScriptAsync("document.title");
-                _WV2Service.SiteTitle = siteTitle.Trim('"');
-                _WV2Service.RaiseNavigationChanged(sender, WebControl.Source.ToString());
+                if (e.IsSuccess)
+                {
+                    string siteTitle = await WebControl.CoreWebView2.ExecuteScriptAsync("document.title");
+                    _WV2Service.SiteTitle = siteTitle.Trim('"');
+                    _WV2Service.RaiseNavigationChanged(sender, WebControl.Source.ToString());
+                }
+                else
+                {
+                    _WV2Service.RaiseNavigationChanged(sender, "Navigation failed.");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                _WV2Service.RaiseNavigationChanged(sender, "Navigation failed.");
+                _WV2Service.LogError?.Invoke(ex);
             }
         }
         private void OnNavigationStarting(object? sender, CoreWebView2NavigationStartingEventArgs e)
         {
-            _WV2Service.URL = e.Uri;
-            _WV2Service.RaiseNavigationChanged(sender, $"Navigating to: {e.Uri}");
+            try
+            {
+                _WV2Service.URL = e.Uri;
+                _WV2Service.RaiseNavigationChanged(sender, $"Navigating to: {e.Uri}");
+            }
+            catch (Exception ex)
+            {
+                _WV2Service.LogError?.Invoke(ex);
+            }
         }
     }
 }
