@@ -21,7 +21,7 @@ namespace MobileView.Winforms
             datagridview.DataSource = null;
             datagridview.Rows.Clear();
             datagridview.Columns.Clear();
-            HistoryTable = await Browser.GetHistory();
+            //HistoryTable = await Browser.GetHistory();
             datagridview.DataSource = HistoryTable;
             datagridview.Columns["Visit Count"].Visible = false;
             datagridview.Columns["URL"].Visible = false;
@@ -51,7 +51,7 @@ namespace MobileView.Winforms
         }
         private void clearAllBrowsingHistoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Browser.Clear.AllBrowsingData();
+            //Browser.Clear.AllBrowsingData();
         }
         private void BackButton_Click(object sender, EventArgs e)
         {
