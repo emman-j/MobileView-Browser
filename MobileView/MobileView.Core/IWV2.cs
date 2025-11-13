@@ -15,7 +15,6 @@ namespace MobileView.Core
         string URL { get; set; }
         string ProfileFolder { get; set; }
         string UserAgent { get; set; }
-        List<string> ExtensionsPath { get; set; }
         CoreWebView2Environment Environment { get; set; }
         CoreWebView2Profile Profile { get; set; }
         WebViewWrapper WebControl { get; set; }
