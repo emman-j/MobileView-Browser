@@ -27,6 +27,7 @@ namespace MobileView.Core
         public WebViewWrapper WebControl { get; set; }
         public NavigationManager Navigation { get; set; }
         public ExtensionManager Extensions { get; set; }
+        public HistoryManager History { get; set; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
         public event EventHandler<CoreWebView2NewWindowRequestedEventArgs> NewWindowRequested;
@@ -40,6 +41,7 @@ namespace MobileView.Core
             Navigation = new NavigationManager(this);
             Extensions = new ExtensionManager(this);
             WebControl = new WebViewWrapper(ui, webcontrol);
+            History = new HistoryManager(this);
             LogError = LogE;
         }
 
