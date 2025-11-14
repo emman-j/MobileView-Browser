@@ -1,20 +1,14 @@
 ﻿using Microsoft.Web.WebView2.Core;
-using Microsoft.Web.WebView2.WinForms;
 using MobileView.Core.Enums;
 using MobileView.Core.Service;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MobileView.Core
 {
-    public class WV2Service : IWV2
+    public class WV2Service : IWV2, INotifyPropertyChanged
     {
         public string SiteTitle { get; set; }
         public string ProfileName { get; set; }
@@ -50,6 +44,17 @@ namespace MobileView.Core
         {
             Debug.WriteLine($"Error in {sender}: {ex.Message}");
         }
+        protected void SetValue<T>(ref T field, T value, [CallerMemberName] string propertyName = "")
+        {
+            if (!Equals(field, value))
+            {
+                field = value;
+                NotifyPropertyChanged(propertyName);
+            }
+        }
+        public void NotifyPropertyChanged([CallerMemberName] string propertyname = "") 
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyname));
+
         private async Task<CoreWebView2Environment> InitializeWebEnviromentAsync(string profileName)
         {
             try
