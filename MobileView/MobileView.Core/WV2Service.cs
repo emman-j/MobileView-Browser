@@ -10,18 +10,31 @@ namespace MobileView.Core
 {
     public class WV2Service : IWV2, INotifyPropertyChanged
     {
-        public string SiteTitle { get; set; }
-        public string ProfileName { get; set; }
-        public string URL { get; set; }
-        public string ProfileFolder { get; set; }
-        public string UserAgent { get; set; }
-        public string _TempFolder { get; set; }
-        public CoreWebView2Environment Environment { get; set; }
-        public CoreWebView2Profile Profile { get; set; }
-        public WebViewWrapper WebControl { get; set; }
-        public NavigationManager Navigation { get; set; }
-        public ExtensionManager Extensions { get; set; }
-        public HistoryManager History { get; set; }
+        private string _siteTitle;
+        private string _profileName;
+        private string _uRL;
+        private string _profileFolder;
+        private string _userAgent;
+        private string __TempFolder;
+        private CoreWebView2Environment _environment;
+        private CoreWebView2Profile _profile;
+        private WebViewWrapper _webControl;
+        private NavigationManager _navigation;
+        private ExtensionManager _extensions;
+        private HistoryManager _history;
+
+        public string SiteTitle { get => _siteTitle; set => SetValue(ref _siteTitle, value); }
+        public string ProfileName { get => _profileName; set => SetValue(ref _profileName, value); }
+        public string URL { get => _uRL; set => SetValue(ref _uRL, value); }
+        public string ProfileFolder { get => _profileFolder; set => SetValue(ref _profileFolder, value); }
+        public string UserAgent { get => _userAgent; set => SetValue(ref _userAgent, value); }
+        public string _TempFolder { get => __TempFolder; set => SetValue(ref __TempFolder, value); }
+        public CoreWebView2Environment Environment { get => _environment; set => SetValue(ref _environment, value); }
+        public CoreWebView2Profile Profile { get => _profile; set => SetValue(ref _profile, value); }
+        public WebViewWrapper WebControl { get => _webControl; set => SetValue(ref _webControl, value); }
+        public NavigationManager Navigation { get => _navigation; set => SetValue(ref _navigation, value); }
+        public ExtensionManager Extensions { get => _extensions; set => SetValue(ref _extensions, value); }
+        public HistoryManager History { get => _history; set => SetValue(ref _history, value); }
 
         public event PropertyChangedEventHandler? PropertyChanged;
         public event EventHandler<CoreWebView2NewWindowRequestedEventArgs> NewWindowRequested;
