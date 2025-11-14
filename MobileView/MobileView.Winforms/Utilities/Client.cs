@@ -34,7 +34,7 @@ namespace MobileView.Winforms.Utilities
             WebService.Extensions.EnsureDirectory();
             _extensionsPaths = WebService.Extensions.GetExtensionsPath();
         }
-        public async void InitializeBrowser()
+        public void InitializeBrowser()
         {
             WebService = new WV2Service(UIFramework, WebViewControl)
             {
@@ -76,7 +76,7 @@ namespace MobileView.Winforms.Utilities
                 newWindow.Show();
             }
         }
-        public async void ViewExtensions()
+        public async Task ViewExtensions()
         {
             List<string> extensions = await WebService.Extensions.GetExtensionsList();
             string extensionstring = string.Join(",\n", extensions);
@@ -97,13 +97,12 @@ namespace MobileView.Winforms.Utilities
             }
             return favorites;
         }
-        public async void OnFormLoad()
+        public async Task OnFormLoad()
         {
             if (_incognito) { await Task.Delay(1000); }
             if (!string.IsNullOrWhiteSpace(_url)) { WebService.Navigation.NewTabGoTo(_url); return; }
             WebService.Navigation.GoTo("www.google.com");
         }
-
 
         // Form Events / Controls
         private void OnNewWindowRequested(object? sender, CoreWebView2NewWindowRequestedEventArgs e) // custom event when a link new tab/window is requested
