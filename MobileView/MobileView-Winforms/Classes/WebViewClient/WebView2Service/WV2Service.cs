@@ -5,13 +5,14 @@ using System.Runtime.CompilerServices;
 
 namespace WV2Service
 {
-    public partial class WebViewService
+    public partial class WebViewService : INotifyPropertyChanged
     {
-        //private WV2ServiceModel _WebViewModel;
+        private WV2ServiceModel _WebViewModel;
         private string _TempFolder { get; set; }
         private string _addExtensionsDirectory { get; set; }
-        internal ClearManager Clear { get; }
-        internal NavigationManager Navigation { get; }
+        public ClearManager Clear { get; }
+        public NavigationManager Navigation { get; }
+        public event PropertyChangedEventHandler? PropertyChanged;
         public event EventHandler<CoreWebView2NewWindowRequestedEventArgs> NewWindowRequested;
         public event EventHandler<string> NavigationChanged;
 
@@ -125,11 +126,13 @@ namespace WV2Service
         }
         public WebViewService() 
         {
+            _WebViewModel = new WV2ServiceModel();
             Clear = new ClearManager(this);
             Navigation = new NavigationManager(this);
         }
         public WebViewService(WebView2 _WebViewControl, string _ProfileName, List<string> _ExtensionsPath)
         {
+            _WebViewModel = new WV2ServiceModel();
             Clear = new ClearManager(this);
             Navigation = new NavigationManager(this);
             WebViewControl = _WebViewControl;
@@ -138,6 +141,7 @@ namespace WV2Service
         }
         public WebViewService(CoreWebView2Profile _profile, string ProfileFolderPath) //SharedProfile e.g. 2 webcontrol 1 user profile
         {
+            _WebViewModel = new WV2ServiceModel();
             Clear = new ClearManager(this);
             Navigation = new NavigationManager(this);
             Profile = _profile;
@@ -145,10 +149,16 @@ namespace WV2Service
         }
         public WebViewService(CoreWebView2Profile _profile, CoreWebView2Environment _environment) //SharedProfile e.g. 2 webcontrol 1 user profile
         {
+            _WebViewModel = new WV2ServiceModel();
             Clear = new ClearManager(this);
             Navigation = new NavigationManager(this);
             Profile = _profile;
             environment = _environment;
+        }
+
+        public void NotifyPropertyChanged([CallerMemberName] string propertyname = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyname));
         }
 
     }
