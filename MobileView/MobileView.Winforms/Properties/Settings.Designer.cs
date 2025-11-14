@@ -35,5 +35,17 @@ namespace MobileView.Winforms.Properties {
                 this["UserAgent"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("User1")]
+        public string ProfileName {
+            get {
+                return ((string)(this["ProfileName"]));
+            }
+            set {
+                this["ProfileName"] = value;
+            }
+        }
     }
 }
