@@ -21,7 +21,7 @@ namespace MobileView.Winforms
             datagridview.DataSource = null;
             datagridview.Rows.Clear();
             datagridview.Columns.Clear();
-            //HistoryTable = await Browser.GetHistory();
+            HistoryTable = await Browser.History.GetHistory();
             datagridview.DataSource = HistoryTable;
             datagridview.Columns["Visit Count"].Visible = false;
             datagridview.Columns["URL"].Visible = false;
