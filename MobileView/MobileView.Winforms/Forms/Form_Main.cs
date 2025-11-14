@@ -8,8 +8,8 @@ namespace MobileView.Winforms
 {
     public partial class Form_Main : Form
     {
-        //private static string UserAgent = Properties.Settings.Default.UserAgent;
-        private static string UserAgent = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.7444.139 Mobile Safari/537.36";
+        private static string UserAgent = Properties.Settings.Default.UserAgent;
+        //private static string UserAgent = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.7444.139 Mobile Safari/537.36";
         private readonly TitleBar titleBar;
         private readonly FormManager formManager;
         private WV2Service WebService;
