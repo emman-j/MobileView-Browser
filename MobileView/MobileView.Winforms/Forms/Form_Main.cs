@@ -205,11 +205,11 @@ namespace MobileView.Winforms
         // Menu Strip
         private void ClearAllBrowserDataToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //WebService.Clear.AllBrowserData();
+            WebService.History.ClearAllBrowserData();
         }
         private void ClearAllBrowsingDataToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            //WebService.Clear.AllBrowsingData();
+            WebService.History.ClearAllBrowsingData();
         }
         private void IncognitoToolStripMenuItem_Click(object sender, EventArgs e)
         {

@@ -51,7 +51,7 @@ namespace MobileView.Winforms
         }
         private void clearAllBrowsingHistoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //Browser.Clear.AllBrowsingData();
+            Browser.History.ClearAllBrowsingData();
         }
         private void BackButton_Click(object sender, EventArgs e)
         {
