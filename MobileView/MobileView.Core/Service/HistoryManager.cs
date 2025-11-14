@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.Data.Sqlite;
+using Microsoft.Web.WebView2.Core;
 using System.Data;
 using System.IO;
 
@@ -265,6 +266,7 @@ namespace MobileView.Core.Service
                 throw new SqliteException(ex.Message, ex.SqliteErrorCode);
             }
         }
+
         public async Task<DataTable> GetHistory()
         {
             string historyFilePath = (!string.IsNullOrWhiteSpace(_WV2Service._TempFolder)) ?
@@ -304,5 +306,69 @@ namespace MobileView.Core.Service
             }
             return favoritesDict;
         }
+
+        public async void ClearAllBrowsingData()
+        {
+            try
+            {
+                CoreWebView2Profile profile = await _WV2Service.GetProfileAsync();
+                await profile.ClearBrowsingDataAsync(
+                    CoreWebView2BrowsingDataKinds.Cookies |
+                    CoreWebView2BrowsingDataKinds.BrowsingHistory |
+                    CoreWebView2BrowsingDataKinds.GeneralAutofill |
+                    CoreWebView2BrowsingDataKinds.PasswordAutosave |
+                    CoreWebView2BrowsingDataKinds.ServiceWorkers |
+                    CoreWebView2BrowsingDataKinds.CacheStorage |
+                    CoreWebView2BrowsingDataKinds.DownloadHistory |
+                    CoreWebView2BrowsingDataKinds.DiskCache);
+                _WV2Service.WebControl.Reload();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to clear data:\n{ex.Message}");
+            }
+        }
+        public async void ClearBrowsingDataBetweenDateRange(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                CoreWebView2Profile profile = await _WV2Service.GetProfileAsync();
+                await profile.ClearBrowsingDataAsync(
+                    CoreWebView2BrowsingDataKinds.Cookies |
+                    CoreWebView2BrowsingDataKinds.BrowsingHistory |
+                    CoreWebView2BrowsingDataKinds.GeneralAutofill |
+                    CoreWebView2BrowsingDataKinds.PasswordAutosave |
+                    CoreWebView2BrowsingDataKinds.ServiceWorkers |
+                    CoreWebView2BrowsingDataKinds.CacheStorage |
+                    CoreWebView2BrowsingDataKinds.DownloadHistory |
+                    CoreWebView2BrowsingDataKinds.DiskCache, startDate, endDate);
+                _WV2Service.WebControl.Reload();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to clear data:\n{ex.Message}");
+            }
+        }
+        public async void ClearBrowserData(CoreWebView2BrowsingDataKinds dataKinds)
+        {
+            try
+            {
+                CoreWebView2Profile profile = await _WV2Service.GetProfileAsync();
+                await profile.ClearBrowsingDataAsync(dataKinds);
+                _WV2Service.WebControl.Reload();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to clear data:\n{ex.Message}");
+            }
+        }
+        public async void ClearAllBrowserData()
+        {
+            CoreWebView2Profile profile = await _WV2Service.GetProfileAsync();
+            await _WV2Service.EnsureCoreWebView2Async();
+            await profile.ClearBrowsingDataAsync();
+            _WV2Service.WebControl.Reload();
+        }
+
     }
 }
