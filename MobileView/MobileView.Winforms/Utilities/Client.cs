@@ -8,24 +8,24 @@ namespace MobileView.Winforms.Utilities
 {
     public class Client
     {
-        private readonly TitleBar titleBar;
-        private readonly FormManager formManager;
-        private WV2Service WebService;
-        private List<string> _extensionsPaths;
-        private bool _incognito;
-        private bool _newWindow;
-        private string _url;
-        private Form MainForm;
+        public TitleBar titleBar { get; set; }
+        public FormManager formManager { get; set; }
+        public WV2Service WebService { get; set; }
+        public List<string> _extensionsPaths { get; set; }
+        public bool _incognito { get; set; }
+        public bool _newWindow { get; set; }
+        public string _url { get; set; }
+        public Form MainForm { get; set; }
         private UIFramework UIFramework => UIFramework.Winforms;
         public SettingsManager Settings { get; set; }
         public object WebViewControl { get; set; }
 
-        public Client(Form mainForm)
+        public Client(Form mainForm, object webViewControl)
         {
             MainForm = mainForm;
+            WebViewControl = webViewControl;
             formManager = new FormManager(mainForm);
             Settings = new SettingsManager();
-            formManager.PreserveCurrentFormLocationAndSize(mainForm);
 
             WebService = new WV2Service(UIFramework, WebViewControl)
             {
@@ -103,6 +103,26 @@ namespace MobileView.Winforms.Utilities
             if (!string.IsNullOrWhiteSpace(_url)) { WebService.Navigation.NewTabGoTo(_url); return; }
             WebService.Navigation.GoTo("www.google.com");
         }
+        public async Task<bool> OnFormClose(Form form)
+        {
+            bool isClosing = false;
+            if (_incognito)
+                await WebService.Navigation.Incognito_DisposeSession();
+
+            if (_incognito || _newWindow)
+            {
+                form.Hide();
+                form.Dispose();
+                return false;
+            }
+            return true;
+        }
+
+        public void Reload() => WebService.Navigation.Reload();
+        public void Back() => WebService.Navigation.GoBack();
+        public void GoTo(string URL) => WebService.Navigation.GoTo(URL);
+        public void ClearAllBrowserData() => WebService.History.ClearAllBrowserData();
+        public void ClearAllBrowsingData() => WebService.History.ClearAllBrowsingData();
 
         // Form Events / Controls
         private void OnNewWindowRequested(object? sender, CoreWebView2NewWindowRequestedEventArgs e) // custom event when a link new tab/window is requested
