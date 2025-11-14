@@ -115,14 +115,14 @@ namespace MobileView.Winforms
         }
         private async void GetFavorites()
         {
-            //Dictionary<string, string> favorites = await WebService.GetFavoritesDict();
-            //if (favorites == null) { return; }
-            //foreach (var kvp in favorites)
-            //{
-            //    ToolStripMenuItem favoritesMenuItem = new ToolStripMenuItem(kvp.Key);
-            //    favoritesMenuItem.Click += (sender, e) => WebService.Navigation.GoTo(kvp.Value);
-            //    favoritesToolStripMenuItem.DropDownItems.Add(favoritesMenuItem);
-            //}
+            Dictionary<string, string> favorites = await WebService.History.GetFavoritesDict();
+            if (favorites == null) { return; }
+            foreach (var kvp in favorites)
+            {
+                ToolStripMenuItem favoritesMenuItem = new ToolStripMenuItem(kvp.Key);
+                favoritesMenuItem.Click += (sender, e) => WebService.Navigation.GoTo(kvp.Value);
+                favoritesToolStripMenuItem.DropDownItems.Add(favoritesMenuItem);
+            }
         }
         private async void OnFormLoad()
         {
