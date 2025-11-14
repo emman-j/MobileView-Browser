@@ -11,6 +11,7 @@ namespace MobileView.Winforms.Utilities
     public class SettingsManager
     {
         public string UserAgent { get => Properties.Settings.Default.UserAgent; set => Properties.Settings.Default.UserAgent = value; }
+        public string ProfileName { get => Properties.Settings.Default.ProfileName; set => Properties.Settings.Default.ProfileName = value; }
         public SettingsManager() { }
 
         public void Save()
