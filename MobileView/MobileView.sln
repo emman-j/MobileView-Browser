@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MobileView.Winforms", "Mobi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MobileView.Wpf", "MobileView.Wpf\MobileView.Wpf.csproj", "{5E59D533-D913-49F5-B3BB-F258844FEF16}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MobileView-Legacy", "MobileView-Winforms\MobileView-Legacy.csproj", "{8631BE2C-097C-6F11-C8FA-BC71CFD517F3}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +27,6 @@ Global
 		{5E59D533-D913-49F5-B3BB-F258844FEF16}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E59D533-D913-49F5-B3BB-F258844FEF16}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5E59D533-D913-49F5-B3BB-F258844FEF16}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8631BE2C-097C-6F11-C8FA-BC71CFD517F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8631BE2C-097C-6F11-C8FA-BC71CFD517F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8631BE2C-097C-6F11-C8FA-BC71CFD517F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8631BE2C-097C-6F11-C8FA-BC71CFD517F3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
