@@ -133,6 +133,11 @@ namespace MobileView.Core
             {
                 await EnsureCoreWebView2Async(Environment);
 
+                //await WebControl.CoreWebView2.CallDevToolsProtocolMethodAsync(
+                //    "Emulation.setDeviceMetricsOverride",
+                //    "{\"width\":375,\"height\":812,\"deviceScaleFactor\":3,\"mobile\":true}"
+                //);
+
                 // Set custom User-Agent if provided
                 if (!string.IsNullOrEmpty(UserAgent))
                     WebControl.CoreWebView2.Settings.UserAgent = UserAgent;
