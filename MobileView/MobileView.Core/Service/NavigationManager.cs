@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
@@ -58,19 +59,53 @@ namespace MobileView.Core.Service
             }
             return false;
         }
+        private string ModifyUrlToMobileSubdomain(string url)
+        {
+            Uri uri = new Uri(url);
+
+            // Replace 'www.' with 'm.' in the host part of the URL
+            if (uri.Host.StartsWith("www."))
+            {
+                uri = new Uri(url.Replace("www.", "m."));
+            }
+
+            return uri.ToString();
+        }
+        private async Task<bool> IsUrlReachableAsync(string url)
+        {
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    var response = await client.GetAsync(url);
+                    return response.IsSuccessStatusCode;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
         private async Task NavigateTo(string address)
         {
             try
             {
                 if (IsURLSuffixValid(address))
                 {
-                    _WV2Service.URL = EnsureHttpsPrefix(address);
+                    address = EnsureHttpsPrefix(address);
+
+                    string a = ModifyUrlToMobileSubdomain(address);
+                    if (await IsUrlReachableAsync(a))
+                        address = a;
+
+                    //_WV2Service.URL = EnsureHttpsPrefix(address);
+                    _WV2Service.URL = address;
                     await _WV2Service.EnsureCoreWebView2Async();
                     WebControl.Navigate(_WV2Service.URL);
                     return;
                 }
                 string searchQuery = Uri.EscapeDataString(address);
-                string searchUrl = "https://www.google.com/search?q=" + searchQuery;
+                string searchUrl = "https://m.google.com/search?q=" + searchQuery;
                 _WV2Service.URL = (new Uri(searchUrl)).ToString();
 
                 await _WV2Service.EnsureCoreWebView2Async();
