@@ -35,7 +35,7 @@ public partial class Form_Settings : Form
     private void button4_Click(object sender, EventArgs e)
     {
         int idx = listBox1.SelectedIndex;
-        if (idx >= 0 && !string.IsNullOrWhiteSpace(textBox2.Text))
+        if (idx >= 0 && !string.IsNullOrWhiteSpace(textBox3.Text))
             listBox1.Items[idx] = textBox3.Text.Trim();
     }
     private void button2_Click(object sender, EventArgs e)

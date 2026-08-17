@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form_Settings));
             TopBarPanel = new Panel();
             BackButton = new Button();
             button1 = new Button();
@@ -37,8 +38,6 @@
             panel2 = new Panel();
             listBox1 = new ListBox();
             panel4 = new Panel();
-            textBox3 = new TextBox();
-            button4 = new Button();
             button3 = new Button();
             panel3 = new Panel();
             textBox2 = new TextBox();
@@ -46,12 +45,16 @@
             label3 = new Label();
             panel5 = new Panel();
             textBox4 = new TextBox();
+            panel6 = new Panel();
+            button4 = new Button();
+            textBox3 = new TextBox();
             TopBarPanel.SuspendLayout();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
             panel4.SuspendLayout();
             panel3.SuspendLayout();
             panel5.SuspendLayout();
+            panel6.SuspendLayout();
             SuspendLayout();
             // 
             // TopBarPanel
@@ -121,6 +124,7 @@
             // panel2
             // 
             panel2.Controls.Add(listBox1);
+            panel2.Controls.Add(panel6);
             panel2.Controls.Add(panel4);
             panel2.Controls.Add(panel3);
             panel2.Controls.Add(label3);
@@ -128,7 +132,7 @@
             panel2.Location = new Point(0, 132);
             panel2.Name = "panel2";
             panel2.Padding = new Padding(5);
-            panel2.Size = new Size(312, 209);
+            panel2.Size = new Size(312, 262);
             panel2.TabIndex = 9;
             // 
             // listBox1
@@ -136,43 +140,21 @@
             listBox1.Dock = DockStyle.Fill;
             listBox1.FormattingEnabled = true;
             listBox1.ItemHeight = 15;
-            listBox1.Location = new Point(5, 54);
+            listBox1.Location = new Point(5, 88);
             listBox1.Name = "listBox1";
-            listBox1.Size = new Size(302, 116);
+            listBox1.Size = new Size(302, 135);
             listBox1.TabIndex = 9;
             listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
             // 
             // panel4
             // 
-            panel4.Controls.Add(textBox3);
-            panel4.Controls.Add(button4);
             panel4.Controls.Add(button3);
             panel4.Dock = DockStyle.Bottom;
-            panel4.Location = new Point(5, 170);
+            panel4.Location = new Point(5, 223);
             panel4.Name = "panel4";
             panel4.Padding = new Padding(0, 5, 0, 5);
             panel4.Size = new Size(302, 34);
             panel4.TabIndex = 10;
-            // 
-            // textBox3
-            // 
-            textBox3.Dock = DockStyle.Fill;
-            textBox3.Location = new Point(0, 5);
-            textBox3.Name = "textBox3";
-            textBox3.Size = new Size(163, 23);
-            textBox3.TabIndex = 10;
-            // 
-            // button4
-            // 
-            button4.Dock = DockStyle.Right;
-            button4.Location = new Point(163, 5);
-            button4.Margin = new Padding(3, 3, 5, 3);
-            button4.Name = "button4";
-            button4.Size = new Size(65, 24);
-            button4.TabIndex = 9;
-            button4.Text = "Update";
-            button4.UseVisualStyleBackColor = true;
-            button4.Click += button4_Click;
             // 
             // button3
             // 
@@ -246,6 +228,36 @@
             textBox4.Size = new Size(205, 23);
             textBox4.TabIndex = 7;
             // 
+            // panel6
+            // 
+            panel6.Controls.Add(textBox3);
+            panel6.Controls.Add(button4);
+            panel6.Dock = DockStyle.Top;
+            panel6.Location = new Point(5, 54);
+            panel6.Name = "panel6";
+            panel6.Padding = new Padding(0, 5, 0, 5);
+            panel6.Size = new Size(302, 34);
+            panel6.TabIndex = 9;
+            // 
+            // button4
+            // 
+            button4.Dock = DockStyle.Right;
+            button4.Location = new Point(237, 5);
+            button4.Margin = new Padding(3, 3, 5, 3);
+            button4.Name = "button4";
+            button4.Size = new Size(65, 24);
+            button4.TabIndex = 10;
+            button4.Text = "Update";
+            button4.UseVisualStyleBackColor = true;
+            // 
+            // textBox3
+            // 
+            textBox3.Dock = DockStyle.Fill;
+            textBox3.Location = new Point(0, 5);
+            textBox3.Name = "textBox3";
+            textBox3.Size = new Size(237, 23);
+            textBox3.TabIndex = 11;
+            // 
             // Form_Settings
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -255,6 +267,7 @@
             Controls.Add(panel2);
             Controls.Add(panel1);
             Controls.Add(TopBarPanel);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "Form_Settings";
             Text = "Form_Settings";
             Load += Form_Settings_Load;
@@ -264,11 +277,12 @@
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
             panel4.ResumeLayout(false);
-            panel4.PerformLayout();
             panel3.ResumeLayout(false);
             panel3.PerformLayout();
             panel5.ResumeLayout(false);
             panel5.PerformLayout();
+            panel6.ResumeLayout(false);
+            panel6.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -284,13 +298,14 @@
         private Label label3;
         private ListBox listBox1;
         private Panel panel4;
-        private TextBox textBox3;
-        private Button button4;
         private Button button3;
         private Panel panel3;
         private TextBox textBox2;
         private Button button2;
         private Panel panel5;
         private TextBox textBox4;
+        private Panel panel6;
+        private TextBox textBox3;
+        private Button button4;
     }
 }
