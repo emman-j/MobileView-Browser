@@ -37,6 +37,9 @@
             panel1 = new Panel();
             panel2 = new Panel();
             listBox1 = new ListBox();
+            panel6 = new Panel();
+            textBox3 = new TextBox();
+            button4 = new Button();
             panel4 = new Panel();
             button3 = new Button();
             panel3 = new Panel();
@@ -45,16 +48,13 @@
             label3 = new Label();
             panel5 = new Panel();
             textBox4 = new TextBox();
-            panel6 = new Panel();
-            button4 = new Button();
-            textBox3 = new TextBox();
             TopBarPanel.SuspendLayout();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
+            panel6.SuspendLayout();
             panel4.SuspendLayout();
             panel3.SuspendLayout();
             panel5.SuspendLayout();
-            panel6.SuspendLayout();
             SuspendLayout();
             // 
             // TopBarPanel
@@ -146,6 +146,37 @@
             listBox1.TabIndex = 9;
             listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
             // 
+            // panel6
+            // 
+            panel6.Controls.Add(textBox3);
+            panel6.Controls.Add(button4);
+            panel6.Dock = DockStyle.Top;
+            panel6.Location = new Point(5, 54);
+            panel6.Name = "panel6";
+            panel6.Padding = new Padding(0, 5, 0, 5);
+            panel6.Size = new Size(302, 34);
+            panel6.TabIndex = 9;
+            // 
+            // textBox3
+            // 
+            textBox3.Dock = DockStyle.Fill;
+            textBox3.Location = new Point(0, 5);
+            textBox3.Name = "textBox3";
+            textBox3.Size = new Size(237, 23);
+            textBox3.TabIndex = 11;
+            // 
+            // button4
+            // 
+            button4.Dock = DockStyle.Right;
+            button4.Location = new Point(237, 5);
+            button4.Margin = new Padding(3, 3, 5, 3);
+            button4.Name = "button4";
+            button4.Size = new Size(65, 24);
+            button4.TabIndex = 10;
+            button4.Text = "Update";
+            button4.UseVisualStyleBackColor = true;
+            button4.Click += button4_Click;
+            // 
             // panel4
             // 
             panel4.Controls.Add(button3);
@@ -228,36 +259,6 @@
             textBox4.Size = new Size(205, 23);
             textBox4.TabIndex = 7;
             // 
-            // panel6
-            // 
-            panel6.Controls.Add(textBox3);
-            panel6.Controls.Add(button4);
-            panel6.Dock = DockStyle.Top;
-            panel6.Location = new Point(5, 54);
-            panel6.Name = "panel6";
-            panel6.Padding = new Padding(0, 5, 0, 5);
-            panel6.Size = new Size(302, 34);
-            panel6.TabIndex = 9;
-            // 
-            // button4
-            // 
-            button4.Dock = DockStyle.Right;
-            button4.Location = new Point(237, 5);
-            button4.Margin = new Padding(3, 3, 5, 3);
-            button4.Name = "button4";
-            button4.Size = new Size(65, 24);
-            button4.TabIndex = 10;
-            button4.Text = "Update";
-            button4.UseVisualStyleBackColor = true;
-            // 
-            // textBox3
-            // 
-            textBox3.Dock = DockStyle.Fill;
-            textBox3.Location = new Point(0, 5);
-            textBox3.Name = "textBox3";
-            textBox3.Size = new Size(237, 23);
-            textBox3.TabIndex = 11;
-            // 
             // Form_Settings
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -276,13 +277,13 @@
             panel1.PerformLayout();
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
+            panel6.ResumeLayout(false);
+            panel6.PerformLayout();
             panel4.ResumeLayout(false);
             panel3.ResumeLayout(false);
             panel3.PerformLayout();
             panel5.ResumeLayout(false);
             panel5.PerformLayout();
-            panel6.ResumeLayout(false);
-            panel6.PerformLayout();
             ResumeLayout(false);
         }
 

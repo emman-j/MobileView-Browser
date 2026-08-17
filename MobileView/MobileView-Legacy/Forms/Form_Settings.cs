@@ -1,5 +1,6 @@
 ﻿using MobileView.Classes;
 namespace MobileView.Forms;
+
 public partial class Form_Settings : Form
 {
     private FormManager formManager;
@@ -16,7 +17,7 @@ public partial class Form_Settings : Form
             .OpenExeConfiguration(System.Configuration.ConfigurationUserLevel.PerUserRoamingAndLocal)
             .FilePath;
 
-        textBox4.Text = path; 
+        textBox4.Text = path;
 
         textBox1.Text = Properties.Settings.Default.UserAgent;
 
@@ -83,4 +84,5 @@ public partial class Form_Settings : Form
     {
         this.Close();
     }
+
 }
