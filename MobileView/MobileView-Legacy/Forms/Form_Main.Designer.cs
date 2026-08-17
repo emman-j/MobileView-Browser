@@ -41,6 +41,8 @@
             incognitoToolStripMenuItem = new ToolStripMenuItem();
             exitToolStripMenuItem = new ToolStripMenuItem();
             BrowserToolStripMenuItem = new ToolStripMenuItem();
+            settingsToolStripMenuItem = new ToolStripMenuItem();
+            newWindowToolStripMenuItem = new ToolStripMenuItem();
             historyToolStripMenuItem1 = new ToolStripMenuItem();
             clearAllBrowsingDataToolStripMenuItem1 = new ToolStripMenuItem();
             favoritesToolStripMenuItem = new ToolStripMenuItem();
@@ -49,7 +51,6 @@
             addToolStripMenuItem = new ToolStripMenuItem();
             removeToolStripMenuItem = new ToolStripMenuItem();
             clearAllBrowserDataToolStripMenuItem = new ToolStripMenuItem();
-            settingsToolStripMenuItem = new ToolStripMenuItem();
             IncognitoToolStripMenuItem1 = new ToolStripMenuItem();
             TitleBarPanel = new Panel();
             FormTextLabel = new Label();
@@ -187,11 +188,25 @@
             // 
             // BrowserToolStripMenuItem
             // 
-            BrowserToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { settingsToolStripMenuItem, historyToolStripMenuItem1, favoritesToolStripMenuItem, extensionsToolStripMenuItem1, clearAllBrowserDataToolStripMenuItem });
+            BrowserToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { settingsToolStripMenuItem, newWindowToolStripMenuItem, historyToolStripMenuItem1, favoritesToolStripMenuItem, extensionsToolStripMenuItem1, clearAllBrowserDataToolStripMenuItem });
             BrowserToolStripMenuItem.ForeColor = SystemColors.HighlightText;
             BrowserToolStripMenuItem.Name = "BrowserToolStripMenuItem";
             BrowserToolStripMenuItem.Size = new Size(61, 20);
             BrowserToolStripMenuItem.Text = "&Browser";
+            // 
+            // settingsToolStripMenuItem
+            // 
+            settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            settingsToolStripMenuItem.Size = new Size(190, 22);
+            settingsToolStripMenuItem.Text = "&Settings";
+            settingsToolStripMenuItem.Click += settingsToolStripMenuItem_Click;
+            // 
+            // newWindowToolStripMenuItem
+            // 
+            newWindowToolStripMenuItem.Name = "newWindowToolStripMenuItem";
+            newWindowToolStripMenuItem.Size = new Size(190, 22);
+            newWindowToolStripMenuItem.Text = "&New Window";
+            newWindowToolStripMenuItem.Click += newWindowToolStripMenuItem_Click;
             // 
             // historyToolStripMenuItem1
             // 
@@ -248,13 +263,6 @@
             clearAllBrowserDataToolStripMenuItem.Size = new Size(190, 22);
             clearAllBrowserDataToolStripMenuItem.Text = "&Clear All Browser Data";
             clearAllBrowserDataToolStripMenuItem.Click += ClearAllBrowserDataToolStripMenuItem_Click;
-            // 
-            // settingsToolStripMenuItem
-            // 
-            settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            settingsToolStripMenuItem.Size = new Size(190, 22);
-            settingsToolStripMenuItem.Text = "Settings";
-            settingsToolStripMenuItem.Click += settingsToolStripMenuItem_Click;
             // 
             // IncognitoToolStripMenuItem1
             // 
@@ -383,5 +391,6 @@
         private ToolStripMenuItem clearAllBrowsingDataToolStripMenuItem1;
         private ToolStripMenuItem favoritesToolStripMenuItem;
         private ToolStripMenuItem settingsToolStripMenuItem;
+        private ToolStripMenuItem newWindowToolStripMenuItem;
     }
 }
