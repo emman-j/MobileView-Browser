@@ -91,7 +91,7 @@
             // MenuButton
             // 
             MenuButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            MenuButton.BackgroundImage = Properties.Resources.menu_25dp_FFFFFF;
+            MenuButton.BackgroundImage = MobileView.Properties.Resources.menu_25dp_FFFFFF;
             MenuButton.BackgroundImageLayout = ImageLayout.Stretch;
             MenuButton.FlatAppearance.BorderColor = Color.FromArgb(33, 33, 33);
             MenuButton.FlatStyle = FlatStyle.Flat;
@@ -104,7 +104,7 @@
             // 
             // BackButton
             // 
-            BackButton.BackgroundImage = Properties.Resources.arrow_back_25dp_FFFFFF;
+            BackButton.BackgroundImage = MobileView.Properties.Resources.arrow_back_25dp_FFFFFF;
             BackButton.BackgroundImageLayout = ImageLayout.Stretch;
             BackButton.FlatAppearance.BorderColor = Color.FromArgb(33, 33, 33);
             BackButton.FlatStyle = FlatStyle.Flat;
