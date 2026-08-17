@@ -24,7 +24,7 @@ namespace WV2Service
         }
         private bool IsURLSuffixValid(string url)
         {
-            string[] validTLDs = { ".com", ".org", ".net", ".edu", ".gov", ".io", ".co", ".us", ".uk", ".ph", ".html"};
+            string[] validTLDs = { ".com", ".org", ".net", ".edu", ".gov", ".io", ".co", ".us", ".uk", ".ph", ".html", ".ag" };
             if (url.StartsWith("edge://", StringComparison.OrdinalIgnoreCase)) { return true; }
             foreach (string tld in validTLDs)
             {

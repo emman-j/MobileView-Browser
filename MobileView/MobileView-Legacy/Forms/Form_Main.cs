@@ -154,8 +154,19 @@ namespace MobileView
         private void OnNewWindowRequested(object? sender, CoreWebView2NewWindowRequestedEventArgs e) // custom event when a link new tab/window is requested
         {
             e.Handled = true;
-            string url = e.Uri.ToString();
-            OpenNewWindow(e.Uri);
+            DialogResult res = MessageBox.Show("Would you like to proceed to a new window?",
+            "New Window Requested", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information);
+            if (res == DialogResult.Yes)
+            {
+                string url = e.Uri.ToString();
+                OpenNewWindow(e.Uri);
+            }
+            else if (res == DialogResult.No)
+            {
+                string url = e.Uri.ToString();
+                if (!string.IsNullOrWhiteSpace(url))
+                    Browser.Navigation.NewTabGoTo(url);
+            }
             return;
         }
         private void WebView_PropertyChanged(object? sender, PropertyChangedEventArgs e)
