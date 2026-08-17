@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.WinForms;
 
@@ -11,6 +6,8 @@ namespace WV2Service
 {
     public partial class WebViewService
     {
+        public List<string> validUrlSuffixes {  get; set; } = new List<string>(){ ".com", ".org", ".net", ".edu", ".gov", ".io", ".co", ".us", ".uk", ".ph", ".html" };
+        
         private string EnsureHttpsPrefix(string url)
         {
             if (!url.StartsWith("http://", StringComparison.OrdinalIgnoreCase) &&
@@ -24,9 +21,8 @@ namespace WV2Service
         }
         private bool IsURLSuffixValid(string url)
         {
-            string[] validTLDs = { ".com", ".org", ".net", ".edu", ".gov", ".io", ".co", ".us", ".uk", ".ph", ".html", ".ag" };
             if (url.StartsWith("edge://", StringComparison.OrdinalIgnoreCase)) { return true; }
-            foreach (string tld in validTLDs)
+            foreach (string tld in validUrlSuffixes)
             {
                 if (url.Contains(tld, StringComparison.OrdinalIgnoreCase))
                 {

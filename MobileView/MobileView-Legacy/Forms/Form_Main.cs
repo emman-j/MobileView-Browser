@@ -4,12 +4,14 @@ using System.ComponentModel;
 using System.Xml.Serialization;
 using WV2Service;
 using MobileView.Classes;
+using MobileView.Forms;
 
 namespace MobileView
 {
     public partial class Form_Main : Form
     {
-        private static string UserAgent = Properties.Settings.Default.UserAgent;
+        private static string _userAgent = Properties.Settings.Default.UserAgent;
+        private static List<string> _validUrlPSuffxes = Properties.Settings.Default.ValidUrlSuffix.Cast<string>().ToList();
         private readonly TitleBar titleBar;
         private readonly FormManager formManager;
         private WebViewService Browser;
@@ -35,7 +37,7 @@ namespace MobileView
                 closeButton: CloseButton,
                 minimizeButton: MinimizeButton
             );
-            Browser.UserAgent = UserAgent;
+            Browser.UserAgent = _userAgent;
             formManager.PreserveCurrentFormLocationAndSize(currentForm);
             EnableBorderlessWindows();
             Browser.EnsureExtensionsDirectory();
@@ -63,7 +65,8 @@ namespace MobileView
                 ProfileName = "User1",
                 WebViewControl = WebView21,
                 ExtensionsPath = _extensionsPaths,
-                UserAgent = UserAgent
+                UserAgent = _userAgent,
+                validUrlSuffixes = _validUrlPSuffxes
             };
             Browser.PropertyChanged += WebView_PropertyChanged;
             Browser.NewWindowRequested += OnNewWindowRequested;
@@ -77,8 +80,9 @@ namespace MobileView
             MenuButton.Visible = false;
             URLTextBox.Size = new Size(252, 23);
             Browser = new WebViewService();
-            Browser.UserAgent = UserAgent;
+            Browser.UserAgent = _userAgent;
             Browser.WebViewControl = WebView21;
+            Browser.validUrlSuffixes = _validUrlPSuffxes;
             Browser.PropertyChanged += WebView_PropertyChanged;
             Browser.NewWindowRequested += OnNewWindowRequested;
             Browser.InitializeWebViewNewTab(profileFolder);
@@ -94,7 +98,8 @@ namespace MobileView
                 ProfileName = "User1",
                 WebViewControl = WebView21,
                 ExtensionsPath = ublock,
-                UserAgent = UserAgent
+                UserAgent = _userAgent,
+                validUrlSuffixes = _validUrlPSuffxes
             };
             Browser.PropertyChanged += WebView_PropertyChanged;
             Browser.Incognito_InitializeWebView();
@@ -259,6 +264,19 @@ namespace MobileView
                 this.Hide();
                 historyManager.ShowDialog();
                 formManager.PreserveCurrentFormLocationAndSize(historyManager);
+            }
+            this.Show();
+            MenuButton.PerformClick();
+            Browser.WebViewControl.Focus();
+        }
+
+        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (Form_Settings settingsManager = new Form_Settings(this))
+            {
+                this.Hide();
+                settingsManager.ShowDialog();
+                formManager.PreserveCurrentFormLocationAndSize(settingsManager);
             }
             this.Show();
             MenuButton.PerformClick();

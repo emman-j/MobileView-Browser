@@ -35,5 +35,31 @@ namespace MobileView.Properties {
                 this["UserAgent"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
+<ArrayOfString xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
+  <string> .com</string>
+  <string>.org</string>
+  <string>.net</string>
+  <string>.edu</string>
+  <string>.gov</string>
+  <string>.io</string>
+  <string>.co</string>
+  <string>.us</string>
+  <string>.uk</string>
+  <string>.ph</string>
+  <string>.html</string>
+  <string>.ag</string>
+</ArrayOfString>")]
+        public global::System.Collections.Specialized.StringCollection ValidUrlSuffix {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["ValidUrlSuffix"]));
+            }
+            set {
+                this["ValidUrlSuffix"] = value;
+            }
+        }
     }
 }

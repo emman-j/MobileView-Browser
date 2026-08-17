@@ -43,18 +43,19 @@
             BrowserToolStripMenuItem = new ToolStripMenuItem();
             historyToolStripMenuItem1 = new ToolStripMenuItem();
             clearAllBrowsingDataToolStripMenuItem1 = new ToolStripMenuItem();
+            favoritesToolStripMenuItem = new ToolStripMenuItem();
             extensionsToolStripMenuItem1 = new ToolStripMenuItem();
             viewExtensionsToolStripMenuItem = new ToolStripMenuItem();
             addToolStripMenuItem = new ToolStripMenuItem();
             removeToolStripMenuItem = new ToolStripMenuItem();
             clearAllBrowserDataToolStripMenuItem = new ToolStripMenuItem();
+            settingsToolStripMenuItem = new ToolStripMenuItem();
             IncognitoToolStripMenuItem1 = new ToolStripMenuItem();
             TitleBarPanel = new Panel();
             FormTextLabel = new Label();
             pictureBox1 = new PictureBox();
             MinimizeButton = new Button();
             CloseButton = new Button();
-            favoritesToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)WebView21).BeginInit();
             TopBarPanel.SuspendLayout();
             MenuPanel.SuspendLayout();
@@ -91,7 +92,7 @@
             // MenuButton
             // 
             MenuButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            MenuButton.BackgroundImage = MobileView.Properties.Resources.menu_25dp_FFFFFF;
+            MenuButton.BackgroundImage = Properties.Resources.menu_25dp_FFFFFF;
             MenuButton.BackgroundImageLayout = ImageLayout.Stretch;
             MenuButton.FlatAppearance.BorderColor = Color.FromArgb(33, 33, 33);
             MenuButton.FlatStyle = FlatStyle.Flat;
@@ -104,7 +105,7 @@
             // 
             // BackButton
             // 
-            BackButton.BackgroundImage = MobileView.Properties.Resources.arrow_back_25dp_FFFFFF;
+            BackButton.BackgroundImage = Properties.Resources.arrow_back_25dp_FFFFFF;
             BackButton.BackgroundImageLayout = ImageLayout.Stretch;
             BackButton.FlatAppearance.BorderColor = Color.FromArgb(33, 33, 33);
             BackButton.FlatStyle = FlatStyle.Flat;
@@ -186,7 +187,7 @@
             // 
             // BrowserToolStripMenuItem
             // 
-            BrowserToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { historyToolStripMenuItem1, favoritesToolStripMenuItem, extensionsToolStripMenuItem1, clearAllBrowserDataToolStripMenuItem });
+            BrowserToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { settingsToolStripMenuItem, historyToolStripMenuItem1, favoritesToolStripMenuItem, extensionsToolStripMenuItem1, clearAllBrowserDataToolStripMenuItem });
             BrowserToolStripMenuItem.ForeColor = SystemColors.HighlightText;
             BrowserToolStripMenuItem.Name = "BrowserToolStripMenuItem";
             BrowserToolStripMenuItem.Size = new Size(61, 20);
@@ -206,6 +207,12 @@
             clearAllBrowsingDataToolStripMenuItem1.Size = new Size(197, 22);
             clearAllBrowsingDataToolStripMenuItem1.Text = "&Clear All Browsing Data";
             clearAllBrowsingDataToolStripMenuItem1.Click += ClearAllBrowsingDataToolStripMenuItem1_Click;
+            // 
+            // favoritesToolStripMenuItem
+            // 
+            favoritesToolStripMenuItem.Name = "favoritesToolStripMenuItem";
+            favoritesToolStripMenuItem.Size = new Size(190, 22);
+            favoritesToolStripMenuItem.Text = "&Favorites";
             // 
             // extensionsToolStripMenuItem1
             // 
@@ -241,6 +248,13 @@
             clearAllBrowserDataToolStripMenuItem.Size = new Size(190, 22);
             clearAllBrowserDataToolStripMenuItem.Text = "&Clear All Browser Data";
             clearAllBrowserDataToolStripMenuItem.Click += ClearAllBrowserDataToolStripMenuItem_Click;
+            // 
+            // settingsToolStripMenuItem
+            // 
+            settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            settingsToolStripMenuItem.Size = new Size(190, 22);
+            settingsToolStripMenuItem.Text = "Settings";
+            settingsToolStripMenuItem.Click += settingsToolStripMenuItem_Click;
             // 
             // IncognitoToolStripMenuItem1
             // 
@@ -309,12 +323,6 @@
             CloseButton.TabIndex = 4;
             CloseButton.UseVisualStyleBackColor = true;
             // 
-            // favoritesToolStripMenuItem
-            // 
-            favoritesToolStripMenuItem.Name = "favoritesToolStripMenuItem";
-            favoritesToolStripMenuItem.Size = new Size(190, 22);
-            favoritesToolStripMenuItem.Text = "&Favorites";
-            // 
             // Form_Main
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -374,5 +382,6 @@
         private ToolStripMenuItem historyToolStripMenuItem1;
         private ToolStripMenuItem clearAllBrowsingDataToolStripMenuItem1;
         private ToolStripMenuItem favoritesToolStripMenuItem;
+        private ToolStripMenuItem settingsToolStripMenuItem;
     }
 }
