@@ -58,6 +58,9 @@ public partial class Form_Main : Form
             InitializeBrowser();
         InitializeAddressBar();
     }
+    #endregion
+
+    #region Browser Initialization
     private void InitializeAddressBar()
     {
         addressTextBox1.SuggestionProvider = prefix => wv2Client.DataManager.GetAddressSuggestions(prefix);
@@ -67,10 +70,6 @@ public partial class Form_Main : Form
             wv2Client.Navigation.GoTo(address);
         };
     }
-
-    #endregion
-
-    #region Browser Initialization
     private void InitializeBrowser()
     {
         wv2Client = new Client
@@ -216,7 +215,12 @@ public partial class Form_Main : Form
         foreach (BookmarkEntry entry in bookmarks)
         {
             ToolStripMenuItem bookmarkItem = new(entry.Title);
-            bookmarkItem.Click += (s, e) => wv2Client.Navigation.GoTo(entry.Url);
+            bookmarkItem.Click += (s, e) => 
+            { 
+                wv2Client.Navigation.GoTo(entry.Url);
+                wv2Client.BrowserService.Browser.Focus();
+                BrowserToolStripMenuItem.HideDropDown();
+            };
 
             ToolStripMenuItem removeItem = new("Remove");
             removeItem.Click += async (s, e) =>
@@ -226,7 +230,7 @@ public partial class Form_Main : Form
             };
             bookmarkItem.DropDownItems.Add(removeItem);
 
-            if (string.IsNullOrWhiteSpace(entry.FolderPath))
+            if (string.IsNullOrWhiteSpace(entry.FolderPath) || entry.FolderPath.Equals("bookmarks bar",StringComparison.OrdinalIgnoreCase))
                 bookmarksToolStripMenuItem.DropDownItems.Add(bookmarkItem);
             else
                 GetOrCreateFolderMenu(entry.FolderPath).DropDownItems.Add(bookmarkItem);
