@@ -31,10 +31,10 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form_Main));
             WebView21 = new Microsoft.Web.WebView2.WinForms.WebView2();
             TopBarPanel = new Panel();
+            SearchComboBox = new ComboBox();
             MenuButton = new Button();
             BackButton = new Button();
             ReloadButton = new Button();
-            URLTextBox = new TextBox();
             MenuPanel = new Panel();
             MenuStrip = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
@@ -43,15 +43,18 @@
             BrowserToolStripMenuItem = new ToolStripMenuItem();
             settingsToolStripMenuItem = new ToolStripMenuItem();
             newWindowToolStripMenuItem = new ToolStripMenuItem();
-            historyToolStripMenuItem1 = new ToolStripMenuItem();
-            clearAllBrowsingDataToolStripMenuItem1 = new ToolStripMenuItem();
+            bookmarksToolStripMenuItem = new ToolStripMenuItem();
             favoritesToolStripMenuItem = new ToolStripMenuItem();
+            historyToolStripMenuItem1 = new ToolStripMenuItem();
+            viewHistoryToolStripMenuItem = new ToolStripMenuItem();
+            clearAllBrowsingDataToolStripMenuItem1 = new ToolStripMenuItem();
+            importChromeHistoryToolStripMenuItem = new ToolStripMenuItem();
             extensionsToolStripMenuItem1 = new ToolStripMenuItem();
             viewExtensionsToolStripMenuItem = new ToolStripMenuItem();
             addToolStripMenuItem = new ToolStripMenuItem();
             removeToolStripMenuItem = new ToolStripMenuItem();
-            clearAllBrowserDataToolStripMenuItem = new ToolStripMenuItem();
             IncognitoToolStripMenuItem1 = new ToolStripMenuItem();
+            bookmarkToolStripMenuItem = new ToolStripMenuItem();
             TitleBarPanel = new Panel();
             FormTextLabel = new Label();
             pictureBox1 = new PictureBox();
@@ -80,15 +83,30 @@
             // TopBarPanel
             // 
             TopBarPanel.BackColor = Color.FromArgb(33, 33, 33);
+            TopBarPanel.Controls.Add(SearchComboBox);
             TopBarPanel.Controls.Add(MenuButton);
             TopBarPanel.Controls.Add(BackButton);
             TopBarPanel.Controls.Add(ReloadButton);
-            TopBarPanel.Controls.Add(URLTextBox);
             TopBarPanel.Dock = DockStyle.Top;
             TopBarPanel.Location = new Point(0, 52);
             TopBarPanel.Name = "TopBarPanel";
             TopBarPanel.Size = new Size(321, 31);
             TopBarPanel.TabIndex = 1;
+            // 
+            // SearchComboBox
+            // 
+            SearchComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            SearchComboBox.AutoCompleteMode = AutoCompleteMode.Suggest;
+            SearchComboBox.BackColor = Color.FromArgb(23, 23, 23);
+            SearchComboBox.ForeColor = Color.White;
+            SearchComboBox.FormattingEnabled = true;
+            SearchComboBox.Location = new Point(67, 5);
+            SearchComboBox.Name = "SearchComboBox";
+            SearchComboBox.Size = new Size(223, 23);
+            SearchComboBox.TabIndex = 4;
+            SearchComboBox.SelectionChangeCommitted += SearchComboBox_SelectionChangeCommitted;
+            SearchComboBox.TextChanged += SearchComboBox_TextChanged;
+            SearchComboBox.KeyDown += SearchComboBox_KeyDown;
             // 
             // MenuButton
             // 
@@ -130,19 +148,6 @@
             ReloadButton.UseVisualStyleBackColor = true;
             ReloadButton.Click += ReloadButton_Click;
             // 
-            // URLTextBox
-            // 
-            URLTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            URLTextBox.BackColor = Color.FromArgb(23, 23, 23);
-            URLTextBox.BorderStyle = BorderStyle.FixedSingle;
-            URLTextBox.ForeColor = Color.White;
-            URLTextBox.Location = new Point(65, 4);
-            URLTextBox.Name = "URLTextBox";
-            URLTextBox.Size = new Size(223, 23);
-            URLTextBox.TabIndex = 0;
-            URLTextBox.DoubleClick += URLTextBox_DoubleClick;
-            URLTextBox.KeyDown += URLTextBox_KeyDown;
-            // 
             // MenuPanel
             // 
             MenuPanel.AutoSize = true;
@@ -158,7 +163,7 @@
             // MenuStrip
             // 
             MenuStrip.BackColor = Color.FromArgb(33, 33, 33);
-            MenuStrip.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, BrowserToolStripMenuItem, IncognitoToolStripMenuItem1 });
+            MenuStrip.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, BrowserToolStripMenuItem, bookmarkToolStripMenuItem, IncognitoToolStripMenuItem1 });
             MenuStrip.Location = new Point(0, 0);
             MenuStrip.Name = "MenuStrip";
             MenuStrip.Size = new Size(321, 24);
@@ -188,7 +193,7 @@
             // 
             // BrowserToolStripMenuItem
             // 
-            BrowserToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { settingsToolStripMenuItem, newWindowToolStripMenuItem, historyToolStripMenuItem1, favoritesToolStripMenuItem, extensionsToolStripMenuItem1, clearAllBrowserDataToolStripMenuItem });
+            BrowserToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { settingsToolStripMenuItem, newWindowToolStripMenuItem, bookmarksToolStripMenuItem, favoritesToolStripMenuItem, historyToolStripMenuItem1, extensionsToolStripMenuItem1 });
             BrowserToolStripMenuItem.ForeColor = SystemColors.HighlightText;
             BrowserToolStripMenuItem.Name = "BrowserToolStripMenuItem";
             BrowserToolStripMenuItem.Size = new Size(61, 20);
@@ -197,24 +202,42 @@
             // settingsToolStripMenuItem
             // 
             settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            settingsToolStripMenuItem.Size = new Size(190, 22);
+            settingsToolStripMenuItem.Size = new Size(180, 22);
             settingsToolStripMenuItem.Text = "&Settings";
             settingsToolStripMenuItem.Click += settingsToolStripMenuItem_Click;
             // 
             // newWindowToolStripMenuItem
             // 
             newWindowToolStripMenuItem.Name = "newWindowToolStripMenuItem";
-            newWindowToolStripMenuItem.Size = new Size(190, 22);
+            newWindowToolStripMenuItem.Size = new Size(180, 22);
             newWindowToolStripMenuItem.Text = "&New Window";
             newWindowToolStripMenuItem.Click += newWindowToolStripMenuItem_Click;
             // 
+            // bookmarksToolStripMenuItem
+            // 
+            bookmarksToolStripMenuItem.Name = "bookmarksToolStripMenuItem";
+            bookmarksToolStripMenuItem.Size = new Size(180, 22);
+            bookmarksToolStripMenuItem.Text = "&Bookmarks";
+            // 
+            // favoritesToolStripMenuItem
+            // 
+            favoritesToolStripMenuItem.Name = "favoritesToolStripMenuItem";
+            favoritesToolStripMenuItem.Size = new Size(180, 22);
+            favoritesToolStripMenuItem.Text = "&Favorites";
+            // 
             // historyToolStripMenuItem1
             // 
-            historyToolStripMenuItem1.DropDownItems.AddRange(new ToolStripItem[] { clearAllBrowsingDataToolStripMenuItem1 });
+            historyToolStripMenuItem1.DropDownItems.AddRange(new ToolStripItem[] { viewHistoryToolStripMenuItem, clearAllBrowsingDataToolStripMenuItem1, importChromeHistoryToolStripMenuItem });
             historyToolStripMenuItem1.Name = "historyToolStripMenuItem1";
-            historyToolStripMenuItem1.Size = new Size(190, 22);
+            historyToolStripMenuItem1.Size = new Size(180, 22);
             historyToolStripMenuItem1.Text = "&History";
-            historyToolStripMenuItem1.Click += ViewHistoryToolStripMenuItem_Click;
+            // 
+            // viewHistoryToolStripMenuItem
+            // 
+            viewHistoryToolStripMenuItem.Name = "viewHistoryToolStripMenuItem";
+            viewHistoryToolStripMenuItem.Size = new Size(197, 22);
+            viewHistoryToolStripMenuItem.Text = "&View History";
+            viewHistoryToolStripMenuItem.Click += ViewHistoryToolStripMenuItem_Click;
             // 
             // clearAllBrowsingDataToolStripMenuItem1
             // 
@@ -223,46 +246,40 @@
             clearAllBrowsingDataToolStripMenuItem1.Text = "&Clear All Browsing Data";
             clearAllBrowsingDataToolStripMenuItem1.Click += ClearAllBrowsingDataToolStripMenuItem1_Click;
             // 
-            // favoritesToolStripMenuItem
+            // importChromeHistoryToolStripMenuItem
             // 
-            favoritesToolStripMenuItem.Name = "favoritesToolStripMenuItem";
-            favoritesToolStripMenuItem.Size = new Size(190, 22);
-            favoritesToolStripMenuItem.Text = "&Favorites";
+            importChromeHistoryToolStripMenuItem.Name = "importChromeHistoryToolStripMenuItem";
+            importChromeHistoryToolStripMenuItem.Size = new Size(197, 22);
+            importChromeHistoryToolStripMenuItem.Text = "&Import Chrome History";
+            importChromeHistoryToolStripMenuItem.Click += importChromeHistoryToolStripMenuItem_Click;
             // 
             // extensionsToolStripMenuItem1
             // 
             extensionsToolStripMenuItem1.DropDownItems.AddRange(new ToolStripItem[] { viewExtensionsToolStripMenuItem, addToolStripMenuItem, removeToolStripMenuItem });
             extensionsToolStripMenuItem1.Name = "extensionsToolStripMenuItem1";
-            extensionsToolStripMenuItem1.Size = new Size(190, 22);
+            extensionsToolStripMenuItem1.Size = new Size(180, 22);
             extensionsToolStripMenuItem1.Text = "&Extensions";
             // 
             // viewExtensionsToolStripMenuItem
             // 
             viewExtensionsToolStripMenuItem.Name = "viewExtensionsToolStripMenuItem";
-            viewExtensionsToolStripMenuItem.Size = new Size(117, 22);
+            viewExtensionsToolStripMenuItem.Size = new Size(180, 22);
             viewExtensionsToolStripMenuItem.Text = "&View";
             viewExtensionsToolStripMenuItem.Click += ViewExtensionsToolStripMenuItem_Click;
             // 
             // addToolStripMenuItem
             // 
             addToolStripMenuItem.Name = "addToolStripMenuItem";
-            addToolStripMenuItem.Size = new Size(117, 22);
+            addToolStripMenuItem.Size = new Size(180, 22);
             addToolStripMenuItem.Text = "&Add ";
             addToolStripMenuItem.Click += AddExtensionToolStripMenuItem_Click;
             // 
             // removeToolStripMenuItem
             // 
             removeToolStripMenuItem.Name = "removeToolStripMenuItem";
-            removeToolStripMenuItem.Size = new Size(117, 22);
+            removeToolStripMenuItem.Size = new Size(180, 22);
             removeToolStripMenuItem.Text = "&Remove";
             removeToolStripMenuItem.Click += RemoveExtensionToolStripMenuItem_Click;
-            // 
-            // clearAllBrowserDataToolStripMenuItem
-            // 
-            clearAllBrowserDataToolStripMenuItem.Name = "clearAllBrowserDataToolStripMenuItem";
-            clearAllBrowserDataToolStripMenuItem.Size = new Size(190, 22);
-            clearAllBrowserDataToolStripMenuItem.Text = "&Clear All Browser Data";
-            clearAllBrowserDataToolStripMenuItem.Click += ClearAllBrowserDataToolStripMenuItem_Click;
             // 
             // IncognitoToolStripMenuItem1
             // 
@@ -271,6 +288,14 @@
             IncognitoToolStripMenuItem1.Size = new Size(70, 20);
             IncognitoToolStripMenuItem1.Text = "&Incognito";
             IncognitoToolStripMenuItem1.Click += IncognitoToolStripMenuItem_Click;
+            // 
+            // bookmarkToolStripMenuItem
+            // 
+            bookmarkToolStripMenuItem.ForeColor = Color.White;
+            bookmarkToolStripMenuItem.Name = "bookmarkToolStripMenuItem";
+            bookmarkToolStripMenuItem.Size = new Size(73, 20);
+            bookmarkToolStripMenuItem.Text = "&Bookmark";
+            bookmarkToolStripMenuItem.Click += bookmarkToolStripMenuItem_Click;
             // 
             // TitleBarPanel
             // 
@@ -350,7 +375,6 @@
             Load += Form_Main_Load;
             ((System.ComponentModel.ISupportInitialize)WebView21).EndInit();
             TopBarPanel.ResumeLayout(false);
-            TopBarPanel.PerformLayout();
             MenuPanel.ResumeLayout(false);
             MenuPanel.PerformLayout();
             MenuStrip.ResumeLayout(false);
@@ -366,7 +390,6 @@
 
         private Microsoft.Web.WebView2.WinForms.WebView2 WebView21;
         private Panel TopBarPanel;
-        private TextBox URLTextBox;
         private Button ReloadButton;
         private Button BackButton;
         private Panel MenuPanel;
@@ -377,7 +400,6 @@
         private ToolStripMenuItem incognitoToolStripMenuItem;
         private ToolStripMenuItem extensionsToolStripMenuItem1;
         private ToolStripMenuItem IncognitoToolStripMenuItem1;
-        private ToolStripMenuItem clearAllBrowserDataToolStripMenuItem;
         private ToolStripMenuItem exitToolStripMenuItem;
         private ToolStripMenuItem viewExtensionsToolStripMenuItem;
         private ToolStripMenuItem addToolStripMenuItem;
@@ -392,5 +414,10 @@
         private ToolStripMenuItem favoritesToolStripMenuItem;
         private ToolStripMenuItem settingsToolStripMenuItem;
         private ToolStripMenuItem newWindowToolStripMenuItem;
+        private ComboBox SearchComboBox;
+        private ToolStripMenuItem importChromeHistoryToolStripMenuItem;
+        private ToolStripMenuItem viewHistoryToolStripMenuItem;
+        private ToolStripMenuItem bookmarksToolStripMenuItem;
+        private ToolStripMenuItem bookmarkToolStripMenuItem;
     }
 }
