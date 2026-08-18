@@ -37,7 +37,6 @@
             textBox1.Dock = DockStyle.Fill;
             textBox1.ForeColor = Color.White;
             textBox1.Location = new Point(0, 0);
-            textBox1.MinimumSize = new Size(223, 23);
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(223, 23);
             textBox1.TabIndex = 0;
@@ -46,10 +45,8 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            AutoSizeMode = AutoSizeMode.GrowAndShrink;
             BackColor = Color.FromArgb(39, 39, 39);
             Controls.Add(textBox1);
-            MinimumSize = new Size(223, 23);
             Name = "AddressTextBox";
             Size = new Size(223, 23);
             ResumeLayout(false);

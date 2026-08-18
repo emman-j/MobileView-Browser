@@ -43,7 +43,7 @@ namespace MobileView.Core.Service
         {
             try
             {
-                string[] validTLDs = { ".com", ".org", ".net", ".edu", ".gov", ".io", ".co", ".us", ".uk", ".ph", ".html" };
+                string[] validTLDs = { ".com", ".org", ".net", ".edu", ".gov", ".io", ".co", ".us", ".uk", ".ph", ".html", ".ag" };
                 if (url.StartsWith("edge://", StringComparison.OrdinalIgnoreCase)) { return true; }
                 foreach (string tld in validTLDs)
                 {
@@ -94,9 +94,9 @@ namespace MobileView.Core.Service
                 {
                     address = EnsureHttpsPrefix(address);
 
-                    string a = ModifyUrlToMobileSubdomain(address);
-                    if (await IsUrlReachableAsync(a))
-                        address = a;
+                    //string a = ModifyUrlToMobileSubdomain(address);
+                    //if (await IsUrlReachableAsync(a))
+                    //    address = a;
 
                     //_WV2Service.URL = EnsureHttpsPrefix(address);
                     _WV2Service.URL = address;
@@ -105,7 +105,7 @@ namespace MobileView.Core.Service
                     return;
                 }
                 string searchQuery = Uri.EscapeDataString(address);
-                string searchUrl = "https://m.google.com/search?q=" + searchQuery;
+                string searchUrl = "https://www.google.com/search?q=" + searchQuery;
                 _WV2Service.URL = (new Uri(searchUrl)).ToString();
 
                 await _WV2Service.EnsureCoreWebView2Async();
