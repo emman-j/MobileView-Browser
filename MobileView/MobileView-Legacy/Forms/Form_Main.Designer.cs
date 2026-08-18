@@ -96,13 +96,12 @@
             // addressTextBox1
             // 
             addressTextBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            addressTextBox1.AutoSize = true;
             addressTextBox1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             addressTextBox1.BackColor = Color.FromArgb(39, 39, 39);
             addressTextBox1.Location = new Point(65, 4);
             addressTextBox1.MinimumSize = new Size(223, 23);
             addressTextBox1.Name = "addressTextBox1";
-            addressTextBox1.Size = new Size(223, 23);
+            addressTextBox1.Size = new Size(223, 26);
             addressTextBox1.SuggestionProvider = null;
             addressTextBox1.TabIndex = 5;
             // 
@@ -373,7 +372,6 @@
             Load += Form_Main_Load;
             ((System.ComponentModel.ISupportInitialize)WebView21).EndInit();
             TopBarPanel.ResumeLayout(false);
-            TopBarPanel.PerformLayout();
             MenuPanel.ResumeLayout(false);
             MenuPanel.PerformLayout();
             MenuStrip.ResumeLayout(false);
