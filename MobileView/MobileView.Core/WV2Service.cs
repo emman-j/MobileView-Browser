@@ -116,6 +116,7 @@ namespace MobileView.Core
         {
             try
             {
+                ProfileFolder = FolderPath;
                 CoreWebView2EnvironmentOptions environmentOptions = new CoreWebView2EnvironmentOptions { AreBrowserExtensionsEnabled = true };
                 CoreWebView2Environment environment = await CoreWebView2Environment.CreateAsync(null, FolderPath, environmentOptions);
                 await EnsureCoreWebView2Async(environment);
@@ -173,6 +174,7 @@ namespace MobileView.Core
         }
         private async void InitializeWebViewSession(bool initializeExtensions = true)
         {
+            await WebControl.EnsureCoreWebView2Async(Environment);
             InitializeProfile();
             await EnableMobileViewAsync();
             string ver = GetBrowserVersionString();
