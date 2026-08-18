@@ -1,69 +1,59 @@
 ﻿using MobileView.Classes;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using WV2Service;
-
-namespace MobileView
+using MobileView.WV2Service;
+using MobileView.WV2Service.Data;
+namespace MobileView;
+public partial class Form_HistoryManager : Form
 {
-    public partial class Form_HistoryManager : Form
-    {
-        private readonly WebViewService Browser;
-        private readonly FormManager formManager;
-        private DataTable HistoryTable;
-        public Form_HistoryManager(WebViewService _webViewService, Form? currentform = null)
-        {
-            InitializeComponent();
-            formManager = new FormManager(this);
-            Browser = _webViewService;
-            formManager.PreserveCurrentFormLocationAndSize(currentform);
-        }
-        private async void BindDataGridView(DataGridView datagridview)
-        {
-            datagridview.DataSource = null;
-            datagridview.Rows.Clear();
-            datagridview.Columns.Clear();
-            HistoryTable = await Browser.GetHistory();
-            datagridview.DataSource = HistoryTable;
-            datagridview.Columns["Visit Count"].Visible = false;
-            datagridview.Columns["URL"].Visible = false;
-            datagridview.Columns["ID"].Visible = false;
-        }
-        private void Form_HistoryManager_Shown(object sender, EventArgs e)
-        {
-            BindDataGridView(dataGridView1);
-        }
-        private void ReloadButton_Click(object sender, EventArgs e)
-        {
-            BindDataGridView(dataGridView1);
-        }
-        private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
-        {
-            DataGridView datagridview = (DataGridView)sender;
-            DataGridViewRow row = datagridview.Rows[e.RowIndex];
+    private readonly Client wv2Client;
+    private readonly FormManager formManager;
+    private bool _showingFavorites;
 
-            string? URL = row.Cells["URL"].Value.ToString();
-            if (string.IsNullOrWhiteSpace(URL)) { return; }
-            Browser.Navigation.GoTo(URL);
-            this.Close();
-        }
-        private void MenuButton_Click(object sender, EventArgs e)
+    public Form_HistoryManager(Client client, Form? currentform = null)
+    {
+        InitializeComponent();
+        formManager = new FormManager(this);
+        wv2Client = client;
+        formManager.PreserveCurrentFormLocationAndSize(currentform);
+    }
+
+    private async void BindDataGridView(DataGridView dgv)
+    {
+        dgv.DataSource = null;
+        List<HistoryEntry> entries = _showingFavorites
+            ? await wv2Client.DataManager.GetFavorites()
+            : await wv2Client.DataManager.GetHistory();
+        dgv.DataSource = entries;
+        if (dgv.Columns["Id"] != null) dgv.Columns["Id"].Visible = false;
+        if (dgv.Columns["Url"] != null) dgv.Columns["Url"].Visible = false;
+    }
+
+    private void Form_HistoryManager_Shown(object sender, EventArgs e) => BindDataGridView(dataGridView1);
+    private void ReloadButton_Click(object sender, EventArgs e) => BindDataGridView(dataGridView1);
+
+    private void FavoritesToggle_CheckedChanged(object sender, EventArgs e)
+    {
+        _showingFavorites = ((CheckBox)sender).Checked;
+        BindDataGridView(dataGridView1);
+    }
+
+    private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+    {
+        if (e.RowIndex < 0) return;
+        if (dataGridView1.Rows[e.RowIndex].DataBoundItem is HistoryEntry entry)
         {
-            MenuPanel.Visible = !MenuPanel.Visible;
-        }
-        private void clearAllBrowsingHistoryToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Browser.Clear.AllBrowsingData();
-        }
-        private void BackButton_Click(object sender, EventArgs e)
-        {
+            wv2Client.Navigation.GoTo(entry.Url);
             this.Close();
         }
     }
+
+    private void MenuButton_Click(object sender, EventArgs e) => MenuPanel.Visible = !MenuPanel.Visible;
+
+    private async void clearAllBrowsingHistoryToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        await wv2Client.DataManager.ClearLocalHistory();  // our db
+        await wv2Client.DataManager.AllBrowsingData();    // native WebView2 data too
+        BindDataGridView(dataGridView1);
+    }
+
+    private void BackButton_Click(object sender, EventArgs e) => this.Close();
 }
