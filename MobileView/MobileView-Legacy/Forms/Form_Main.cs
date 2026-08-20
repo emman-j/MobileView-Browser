@@ -98,7 +98,7 @@ public partial class Form_Main : Form
         wv2Client = new Client();
         wv2Client.BrowserService.UserAgent = _userAgent;
         wv2Client.BrowserService.Browser = WebView21;
-        wv2Client.Navigation.validUrlSuffixes = _validUrlSuffixes;
+        wv2Client.Navigation.ValidUrlSuffixes = _validUrlSuffixes;
         wv2Client.BrowserService.PropertyChanged += WebView_PropertyChanged;
         wv2Client.Navigation.NewWindowRequested += OnNewWindowRequested;
         wv2Client.InitializeWebViewNewTab(profileFolder);

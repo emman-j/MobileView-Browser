@@ -40,7 +40,7 @@ public class Client
         };
         DataManager = new BrowsingDataManager(BrowserService);
         Navigation = new NavigationManager(BrowserService);
-        Navigation.validUrlSuffixes = validSuffixes;
+        Navigation.ValidUrlSuffixes = validSuffixes;
     }
     public Client(CoreWebView2Profile profile, string profileFolderPath) //SharedProfile e.g. 2 webcontrol 1 user profile
     {

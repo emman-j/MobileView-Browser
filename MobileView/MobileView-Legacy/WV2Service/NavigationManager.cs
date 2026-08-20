@@ -16,32 +16,31 @@ public class PageVisitedEventArgs : EventArgs
 
 public class NavigationManager(IWV2Service webviewService)
 {
-    public List<string> validUrlSuffixes { get; set; } = new List<string>() { ".com", ".org", ".net", ".edu", ".gov", ".io", ".co", ".us", ".uk", ".ph", ".html" };
-    public event EventHandler<PageVisitedEventArgs> PageVisited;
     private bool _pendingTyped;
 
-    private readonly WebView2 browser = webviewService.Browser;
-    private readonly CoreWebView2Environment Environment = webviewService.Environment;
-    private string URL { get => webviewService.URL; set => webviewService.URL = value; }
-    private string TempFolder { get => webviewService.TempFolder; set => webviewService.TempFolder = value; }
-
+    private WebView2 _browser => webviewService.Browser;
+    private CoreWebView2Environment _environment => webviewService.Environment;
+    private string _url { get => webviewService.URL; set => webviewService.URL = value; }
+    private string _tempFolder { get => webviewService.TempFolder; set => webviewService.TempFolder = value; }
+    public List<string> ValidUrlSuffixes { get; set; } = new List<string>() { ".com", ".org", ".net", ".edu", ".gov", ".io", ".co", ".us", ".uk", ".ph", ".html" };
+    public event EventHandler<PageVisitedEventArgs> PageVisited;
     public event EventHandler<CoreWebView2NewWindowRequestedEventArgs> NewWindowRequested;
     public event EventHandler<string> NavigationChanged;
 
     public Task GoTo(string address) => NavigateTo(address);
     public Task NewTabGoTo(string address) => NavigateToNewTab(address);
-    public void Reload() => browser.Reload();
+    public void Reload() => _browser.Reload();
     public void GoBack()
     {
-        if (browser.CanGoBack) browser.GoBack(); 
+        if (_browser.CanGoBack) _browser.GoBack(); 
     }
     public void GoForward()
     {
-        if (browser.CanGoForward) browser.GoForward();
+        if (_browser.CanGoForward) _browser.GoForward();
     }
     public async Task Incognito_DisposeSession()
     {
-        string tempfolderpath = TempFolder;
+        string tempfolderpath = _tempFolder;
         int maxRetries = 5;
         int delayMilliseconds = 2000;
         for (int attempt = 1; attempt <= maxRetries; attempt++)
@@ -54,7 +53,7 @@ public class NavigationManager(IWV2Service webviewService)
                     if (!Directory.Exists(tempfolderpath)) { return; }
                     Directory.Delete(tempfolderpath, true);
                 });
-                TempFolder = string.Empty;
+                _tempFolder = string.Empty;
             }
             catch
             {
@@ -64,14 +63,14 @@ public class NavigationManager(IWV2Service webviewService)
     }
     public async Task EnableNewWindowRequest()
     {
-        await browser.EnsureCoreWebView2Async(Environment);
-        browser.CoreWebView2.NewWindowRequested += CoreWebView2_NewWindowRequested;
+        await _browser.EnsureCoreWebView2Async(_environment);
+        _browser.CoreWebView2.NewWindowRequested += CoreWebView2_NewWindowRequested;
     }
     public async Task EnableNavigationMonitoring()
     {
-        await browser.EnsureCoreWebView2Async(Environment);
-        browser.NavigationStarting += OnNavigationStarting;
-        browser.NavigationCompleted += OnNavigationCompleted;
+        await _browser.EnsureCoreWebView2Async(_environment);
+        _browser.NavigationStarting += OnNavigationStarting;
+        _browser.NavigationCompleted += OnNavigationCompleted;
     }
 
     private string EnsureHttpsPrefix(string url)
@@ -88,7 +87,7 @@ public class NavigationManager(IWV2Service webviewService)
     private bool IsURLSuffixValid(string url)
     {
         if (url.StartsWith("edge://", StringComparison.OrdinalIgnoreCase)) { return true; }
-        foreach (string tld in validUrlSuffixes)
+        foreach (string tld in ValidUrlSuffixes)
         {
             if (url.Contains(tld, StringComparison.OrdinalIgnoreCase))
             {
@@ -103,34 +102,34 @@ public class NavigationManager(IWV2Service webviewService)
         _pendingTyped = true;
         if (IsURLSuffixValid(address))
         {
-            URL = EnsureHttpsPrefix(address);
-            await browser.EnsureCoreWebView2Async(Environment);
-            browser.CoreWebView2.Navigate(URL);
+            _url = EnsureHttpsPrefix(address);
+            await _browser.EnsureCoreWebView2Async(_environment);
+            _browser.CoreWebView2.Navigate(_url);
             return;
         }
         string searchQuery = Uri.EscapeDataString(address);
         string searchUrl = "https://www.google.com/search?q=" + searchQuery;
-        URL = (new Uri(searchUrl)).ToString();
+        _url = (new Uri(searchUrl)).ToString();
         PageVisited?.Invoke(this, new PageVisitedEventArgs(searchUrl, address, "typed")); // fallthrough, recorded below too
-        await browser.EnsureCoreWebView2Async(Environment);
-        browser.CoreWebView2.Navigate(URL);
+        await _browser.EnsureCoreWebView2Async(_environment);
+        _browser.CoreWebView2.Navigate(_url);
     }
     private async Task NavigateToNewTab(string address)
     {
         if (IsURLSuffixValid(address))
         {
-            URL = EnsureHttpsPrefix(address);
-            await browser.EnsureCoreWebView2Async();
-            browser.Source = new Uri(URL);
+            _url = EnsureHttpsPrefix(address);
+            await _browser.EnsureCoreWebView2Async();
+            _browser.Source = new Uri(_url);
             return;
         }
 
         string searchQuery = Uri.EscapeDataString(address);
         string searchUrl = "https://www.google.com/search?q=" + searchQuery;
-        URL = (new Uri(searchUrl)).ToString();
+        _url = (new Uri(searchUrl)).ToString();
 
-        await browser.EnsureCoreWebView2Async();
-        browser.Source = new Uri(searchUrl);
+        await _browser.EnsureCoreWebView2Async();
+        _browser.Source = new Uri(searchUrl);
     }
     private void CoreWebView2_NewWindowRequested(object? sender, CoreWebView2NewWindowRequestedEventArgs e)
     {
@@ -155,9 +154,9 @@ public class NavigationManager(IWV2Service webviewService)
     {
         if (e.IsSuccess)
         {
-            string siteTitle = await browser.CoreWebView2.ExecuteScriptAsync("document.title");
+            string siteTitle = await _browser.CoreWebView2.ExecuteScriptAsync("document.title");
             webviewService.SiteTitle = siteTitle.Trim('"');
-            string currentUrl = browser.Source.ToString();
+            string currentUrl = _browser.Source.ToString();
             NavigationChanged?.Invoke(this, currentUrl);
 
             string transition = _pendingTyped ? "typed" : "link";
@@ -172,7 +171,7 @@ public class NavigationManager(IWV2Service webviewService)
     }
     private void OnNavigationStarting(object? sender, CoreWebView2NavigationStartingEventArgs e)
     {
-        URL = e.Uri;
+        _url = e.Uri;
         NavigationChanged?.Invoke(this, $"Navigating to: {e.Uri}");
     }
 }
