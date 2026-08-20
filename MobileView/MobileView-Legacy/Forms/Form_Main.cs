@@ -13,8 +13,8 @@ public partial class Form_Main : Form
     private static readonly string _userAgent = Properties.Settings.Default.UserAgent;
     private static readonly List<string> _validUrlSuffixes = Properties.Settings.Default.ValidUrlSuffix.Cast<string>().ToList();
 
-    private readonly TitleBar titleBar;
-    private readonly FormManager formManager;
+    private readonly TitleBar _titleBar;
+    private readonly FormManager _formManager;
     private readonly List<Form> _windows = new();
 
     private List<string> _extensionsPaths;
@@ -34,8 +34,8 @@ public partial class Form_Main : Form
         _incognito = incognito;
         _url = url;
         wv2Client = new Client();
-        formManager = new FormManager(this);
-        titleBar = new TitleBar
+        _formManager = new FormManager(this);
+        _titleBar = new TitleBar
         (
             parentForm: this,
             panel: TitleBarPanel,
@@ -45,7 +45,7 @@ public partial class Form_Main : Form
         );
 
         wv2Client.BrowserService.UserAgent = _userAgent;
-        formManager.PreserveCurrentFormLocationAndSize(currentForm);
+        _formManager.PreserveCurrentFormLocationAndSize(currentForm);
         EnableBorderlessWindows();
         wv2Client.BrowserService.EnsureExtensionsDirectory();
         _extensionsPaths = wv2Client.BrowserService.GetExtensionsPath();
@@ -267,7 +267,7 @@ public partial class Form_Main : Form
         const int WM_NCHITTEST = 0x84;
         base.WndProc(ref m);
         if (m.Msg == WM_NCHITTEST)
-            formManager.HandleWndProc(ref m);
+            _formManager.HandleWndProc(ref m);
     }
 
     private void Form_Main_Load(object sender, EventArgs e) => OnFormLoad();
@@ -338,7 +338,7 @@ public partial class Form_Main : Form
         Form incognito = new Form_Main(incognito: true, currentForm: this);
         Hide();
         incognito.ShowDialog();
-        formManager.PreserveCurrentFormLocationAndSize(incognito);
+        _formManager.PreserveCurrentFormLocationAndSize(incognito);
         Show();
     }
 
@@ -359,7 +359,7 @@ public partial class Form_Main : Form
         {
             Hide();
             settingsManager.ShowDialog();
-            formManager.PreserveCurrentFormLocationAndSize(settingsManager);
+            _formManager.PreserveCurrentFormLocationAndSize(settingsManager);
         }
         Show();
         MenuButton.PerformClick();
