@@ -42,25 +42,37 @@ public class Client
         Navigation = new NavigationManager(BrowserService);
         Navigation.ValidUrlSuffixes = validSuffixes;
     }
-    public Client(CoreWebView2Profile profile, string profileFolderPath) //SharedProfile e.g. 2 webcontrol 1 user profile
+    //public Client(CoreWebView2Profile profile, string profileFolderPath) //SharedProfile e.g. 2 webcontrol 1 user profile
+    //{
+    //    BrowserService = new WV2Service()
+    //    {
+    //        Profile = profile,
+    //        ProfileFolder = profileFolderPath,
+    //    };
+    //    DataManager = new BrowsingDataManager(BrowserService);
+    //    Navigation = new NavigationManager(BrowserService);
+    //}
+    //public Client(CoreWebView2Profile profile, CoreWebView2Environment environment) //SharedProfile e.g. 2 webcontrol 1 user profile
+    //{
+    //    BrowserService = new WV2Service()
+    //    {
+    //        Profile = profile,
+    //        Environment = environment,
+    //    };
+    //    DataManager = new BrowsingDataManager(BrowserService);
+    //    Navigation = new NavigationManager(BrowserService);
+    //}
+    //SharedProfile e.g. 2 webcontrol 1 user profile
+    public Client(WebView2 webViewControl, Client client) : this
+    ( 
+        webViewControl: webViewControl,
+        profileName: client.BrowserService.ProfileName,
+        extensionsPath: client.BrowserService.ExtensionsPath,
+        userAgent: client.BrowserService.UserAgent,
+        validSuffixes: client.Navigation.ValidUrlSuffixes
+    )
     {
-        BrowserService = new WV2Service()
-        {
-            Profile = profile,
-            ProfileFolder = profileFolderPath,
-        };
-        DataManager = new BrowsingDataManager(BrowserService);
-        Navigation = new NavigationManager(BrowserService);
-    }
-    public Client(CoreWebView2Profile profile, CoreWebView2Environment environment) //SharedProfile e.g. 2 webcontrol 1 user profile
-    {
-        BrowserService = new WV2Service()
-        {
-            Profile = profile,
-            Environment = environment,
-        };
-        DataManager = new BrowsingDataManager(BrowserService);
-        Navigation = new NavigationManager(BrowserService);
+        BrowserService.Environment = client.BrowserService.Environment;
     }
     private void InitializeBrowser()
     {
@@ -84,7 +96,7 @@ public class Client
     }
     public void InitializeWebViewNewTab(string ProfileFolder)
     {
-        InitializeSharedEnviroment(ProfileFolder);
+        //InitializeSharedEnviroment(ProfileFolder);
         InitializeProfile();
         EnableMobileView();
         EnableNewWindowRequest();

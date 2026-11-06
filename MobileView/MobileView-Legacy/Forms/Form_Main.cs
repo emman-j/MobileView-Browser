@@ -27,7 +27,7 @@ public partial class Form_Main : Form
     #endregion
 
     #region Constructor
-    public Form_Main(bool incognito = false, Form? currentForm = null, string? url = null, string? profileFolder = null)
+    public Form_Main(bool incognito = false, Form? currentForm = null, string? url = null, Client? oldClient = null)
     {
         InitializeComponent();
 
@@ -53,7 +53,7 @@ public partial class Form_Main : Form
         if (incognito)
             InitializeIncognito();
         else if (!string.IsNullOrWhiteSpace(_url))
-            InitializeNewWindow(profileFolder);
+            InitializeNewWindow(oldClient);
         else
             InitializeBrowser();
         InitializeAddressBar();
@@ -87,21 +87,21 @@ public partial class Form_Main : Form
         FormTextLabel.DataBindings.Add("Text", wv2Client.BrowserService, nameof(wv2Client.BrowserService.SiteTitle));
     }
 
-    private void InitializeNewWindow(string? profileFolder)
+    private void InitializeNewWindow(Client? client)
     {
-        if (profileFolder == null) return;
+        if (client == null) return;
 
         _newWindow = true;
         MenuButton.Visible = false;
         addressTextBox1.Size = new Size(252, 23);
 
-        wv2Client = new Client();
-        wv2Client.BrowserService.UserAgent = _userAgent;
-        wv2Client.BrowserService.Browser = WebView21;
-        wv2Client.Navigation.ValidUrlSuffixes = _validUrlSuffixes;
+        wv2Client = new Client(WebView21, client);
+        //wv2Client.BrowserService.UserAgent = _userAgent;
+        //wv2Client.BrowserService.Browser = WebView21;
+        //wv2Client.Navigation.ValidUrlSuffixes = _validUrlSuffixes;
         wv2Client.BrowserService.PropertyChanged += WebView_PropertyChanged;
         wv2Client.Navigation.NewWindowRequested += OnNewWindowRequested;
-        wv2Client.InitializeWebViewNewTab(profileFolder);
+        wv2Client.InitializeWebViewNewTab(client.BrowserService.ProfileFolder);
         FormTextLabel.DataBindings.Add("Text", wv2Client.BrowserService, nameof(wv2Client.BrowserService.SiteTitle));
     }
 
@@ -134,7 +134,7 @@ public partial class Form_Main : Form
     #region Window Management
     private void OpenNewWindow(string link)
     {
-        Form newWindow = new Form_Main(currentForm: this, url: link, profileFolder: wv2Client.BrowserService.ProfileFolder);
+        Form newWindow = new Form_Main(currentForm: this, url: link, oldClient: wv2Client);
         newWindow.FormClosed += NewWindow_FormClosed;
         _windows.Add(newWindow);
         newWindow.Show();
@@ -219,6 +219,7 @@ public partial class Form_Main : Form
             { 
                 wv2Client.Navigation.GoTo(entry.Url);
                 wv2Client.BrowserService.Browser.Focus();
+                bookmarkItem.HideDropDown();
                 BrowserToolStripMenuItem.HideDropDown();
             };
 
