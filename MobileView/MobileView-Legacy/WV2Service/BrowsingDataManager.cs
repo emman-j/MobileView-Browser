@@ -20,7 +20,7 @@ public class BrowsingDataManager(IWV2Service webviewService)
 
     public Task RecordVisit(string url, string title, string transition = "link") => _localStore.RecordVisitAsync(url, title, transition);
     public Task RecordSearchTerm(string term) => _localStore.RecordSearchTermAsync(term);
-    public Task<List<HistoryEntry>> GetHistory(int limit = 200) => _localStore.GetHistoryAsync(limit);
+    public Task<List<HistoryEntry>> GetHistory(int limit = 1000) => _localStore.GetHistoryAsync(limit);
     public Task<List<HistoryEntry>> GetFavorites(int limit = 20) => _localStore.GetMostVisitedAsync(limit);
     public Task<List<string>> GetSearchSuggestions(string prefix, int limit = 10) => _localStore.GetSearchSuggestionsAsync(prefix, limit);
     public Task<List<AddressSuggestion>> GetAddressSuggestions(string prefix, int limit = 10) => _localStore.GetAddressSuggestionsAsync(prefix, limit);
